@@ -1,6 +1,6 @@
-import { Schema } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface IPassword {
-    userId: Schema.Types.ObjectId;
+    userId: Types.ObjectId;
     password: string;
 }

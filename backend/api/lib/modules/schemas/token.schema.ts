@@ -8,7 +8,7 @@ const tokenTypeEnum = {
 const tokenTypes = [tokenTypeEnum.authorization];
 
 const TokenSchema = new Schema<IToken>({
-    userId: { type: Schema.Types.ObjectId, ref: 'user', required: true },
+    userId: { type:Schema.Types.ObjectId, ref: 'user', required: true },
     createDate: { type: Number, required: true },
     type: { type: String, enum: tokenTypes, required: true },
     value: { type: String, required: true }
