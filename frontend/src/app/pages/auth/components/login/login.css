@@ -1,4 +1,104 @@
-html, body {
-  height: 100%;
-  margin: 0;
+/* Styles for window */
+.main-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-background);
+  height: 100vh;
 }
+
+.login-form {
+  background-color: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 3rem 3rem 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  gap: 1.5rem;
+  width: 300px;
+  max-width: 90%;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  z-index: 11;
+}
+
+.logo .logo-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.logo h1 {
+  font-size: 2rem;
+  margin: 0.5rem 0 0 0;
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif ;
+  font-weight: 700;
+}
+
+/* Styles for inputs and buttons */
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group mat-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--color-primary);
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border:none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.username-input{
+  background-color: var(--color-background);
+  color:var(--color-primary);
+  outline: none;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+}
+
+.password-input{
+  background-color: var(--color-background);
+  color:var(--color-primary);
+  outline: none;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-background) inset !important;
+  -webkit-text-fill-color: var(--color-primary) !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+button[mat-raised-button] {
+  width: 40%;
+  margin: auto;
+  color: var(--color-primary);
+  font-weight: 800;
+  background-color: var(--color-background);
+  border-radius: 1.2rem;
+  padding: 0.75rem 1rem;
+  font-family: Inter, sans-serif;
+
+}
+
