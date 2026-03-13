@@ -1,5 +1,6 @@
 import {Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 import {Router} from '@angular/router';
 import {tap} from 'rxjs';
 
@@ -16,7 +17,7 @@ export class LoginService {
   isLoggedIn = signal(false);
   username = signal<string | null>(null);
 
-  private readonly api_url = 'http://localhost:3100/api/user';
+  private readonly api_url = environment.api.url + '/api/user';
 
   constructor(private http: HttpClient, private router: Router) {}
 
