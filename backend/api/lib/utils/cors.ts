@@ -1,7 +1,7 @@
 import cors from "cors";
 import { CorsOptions } from "cors";
 
-const allowedOrigins = ['http://localhost:4200', 'https://remotecore.onrender.com'];
+const allowedOrigins = ['http://localhost:4200', 'https://remotecore.onrender.com','https://remotecoredashboard.onrender.com'];
 
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
