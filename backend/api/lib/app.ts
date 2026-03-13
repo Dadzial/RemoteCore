@@ -1,9 +1,11 @@
 import express from "express";
 import {config} from "./config";
+import {corsMiddleware} from "./utils/cors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import http from "http";
 import mongoose from "mongoose";
+
 
 class App {
     public app: express.Application;
@@ -17,6 +19,8 @@ class App {
     }
 
     private initializeMiddlewares(): void {
+        this.app.options('/', corsMiddleware);
+        this.app.use(corsMiddleware);
         this.app.use(bodyParser.json());
         this.app.use(morgan('dev'));
     }

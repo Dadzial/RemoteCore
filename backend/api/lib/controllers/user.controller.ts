@@ -4,6 +4,7 @@ import { auth } from '../middlewares/auth.middleware';
 import UserService from "../modules/services/user.service";
 import PasswordService from "../modules/services/password.service";
 import TokenService from "../modules/services/token.service";
+import { loginLimiter } from "../utils/login-limiter";
 import logger from "../utils/logger";
 
 class UserController implements Controller {
@@ -19,9 +20,9 @@ class UserController implements Controller {
     }
 
     private initializeRoutes() : void {
-        this.router.get(`${this.path}/ping`, this.pingServer);
-        this.router.post(`${this.path}/create`, this.createNewOrUpdate);
-        this.router.post(`${this.path}/auth`, this.authenticate);
+        this.router.get(`${this.path}/ping`,auth,this.pingServer);
+        this.router.post(`${this.path}/create`,auth, this.createNewOrUpdate);
+        this.router.post(`${this.path}/auth`, loginLimiter, this.authenticate);
         this.router.delete(`${this.path}/logout/:userId`, auth, this.removeHashSession);
     }
 
