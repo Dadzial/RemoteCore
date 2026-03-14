@@ -60,14 +60,21 @@ export class LoginComponent {
   public focusUsername(): void {
     setTimeout(() => {
       const el = document.querySelector('.username-input') as HTMLElement;
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const rect = el?.getBoundingClientRect();
+      if (rect) {
+        window.scrollBy({ top: rect.bottom - window.innerHeight + 100, behavior: 'smooth' });
+      }
     }, 300);
   }
+
 
   public focusPassword(): void {
     setTimeout(() => {
       const el = document.querySelector('.password-input') as HTMLElement;
-      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const rect = el?.getBoundingClientRect();
+      if (rect) {
+        window.scrollBy({ top: rect.bottom - window.innerHeight + 100, behavior: 'smooth' });
+      }
     }, 300);
   }
 
