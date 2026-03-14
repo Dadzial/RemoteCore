@@ -1,6 +1,6 @@
 <div class="main-container">
   <img src="/svg/settings.svg" class="bg-cog" alt="">
-  <form [formGroup]="loginForm" (ngSubmit)="submit()" class="login-form">
+  <form [formGroup]="loginForm" (ngSubmit)="submit()" class="login-form" autocomplete="off">
     <div class="logo">
       <img src="/icons/artificial-intellegence.png" alt="Robot Icon" class="logo-icon">
       <h1>RemoteCore</h1>
@@ -14,12 +14,28 @@
 
     <div class="input-group">
       <mat-icon>person</mat-icon>
-      <input class="username-input" (focus)="focusUsername()" formControlName="username" type="text" placeholder="Enter username"/>
+      <input
+        class="username-input"
+        (focus)="focusUsername()"
+        formControlName="username"
+        type="text"
+        placeholder="Enter username"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="none"
+      />
     </div>
 
     <div class="input-group">
       <mat-icon>lock</mat-icon>
-      <input class="password-input" (focus)="focusPassword()" formControlName="password" type="password" placeholder="Enter password"/>
+      <input
+        class="password-input"
+        (focus)="focusPassword()"
+        formControlName="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="new-password"
+      />
     </div>
 
     <button mat-raised-button color="primary" type="submit">Login</button>
