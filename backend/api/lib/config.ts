@@ -2,7 +2,8 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 export const config = {
-    port : process.env.PORT,
+    PORT : process.env.PORT,
     JwtSecret: process.env.JWT_SECRET as string,
-    databaseUrl :process.env.DATABASE_URL as string
+    databaseUrl :process.env.DATABASE_URL as string,
+    socketPort : process.env.SOCKET_PORT
 }

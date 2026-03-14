@@ -1,6 +1,7 @@
 import express from "express";
 import {config} from "./config";
-import {corsMiddleware} from "./utils/cors";
+import {Server, Socket} from "socket.io";
+import {corsMiddleware} from "./utils/cors-domains";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import http from "http";
@@ -10,16 +11,17 @@ import mongoose from "mongoose";
 class App {
     public app: express.Application;
     public server: http.Server;
+    public io! : Server;
 
     constructor() {
         this.app = express();
         this.initializeMiddlewares();
         this.server = http.createServer(this.app);
+        this.initializeSocket();
         this.connectToDatabase();
     }
 
     private initializeMiddlewares(): void {
-        this.app.options('/', corsMiddleware);
         this.app.use(corsMiddleware);
         this.app.use(bodyParser.json());
         this.app.use(morgan('dev'));
@@ -53,9 +55,44 @@ class App {
         });
     }
 
+    private initializeSocket(): void {
+        this.io = new Server(this.server, {
+            cors: {
+                origin: [
+                    'http://localhost:4200',
+                    'https://remotecore.onrender.com',
+                    'https://remotecoredashboard.onrender.com'
+                ],
+                methods: ["GET", "POST"],
+                allowedHeaders: ["Authorization"],
+                credentials: true
+            },
+        });
+
+        this.io.on("connection", (socket: Socket) => {
+            console.log(`Nowe połączenie: ${socket.id}`);
+
+
+            socket.on("message", (data: string) => {
+                console.log(`Wiadomość od ${socket.id}: ${data}`);
+                this.io.emit("message", data);
+            });
+
+
+            socket.on("disconnect", () => {
+                console.log(`Rozłączono: ${socket.id}`);
+            });
+        });
+    }
+
+
+    public getIo(): Server {
+        return this.io;
+    }
+
     public listen(): void {
-        this.app.listen(config.port, () => {
-            console.log(`App listening on the port ${config.port}`);
+        this.server.listen(config.PORT, () => {
+            console.log(`App listening on the port ${config.PORT}`);
         });
     }
 }
