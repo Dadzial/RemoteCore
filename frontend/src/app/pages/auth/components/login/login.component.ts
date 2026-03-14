@@ -57,39 +57,6 @@ export class LoginComponent {
     }
   }
 
-  public focusUsername(): void {
-    const el = document.querySelector('.username-input') as HTMLElement;
-
-    const scrollWhenReady = () => {
-      const rect = el?.getBoundingClientRect();
-      if (rect && rect.bottom > window.visualViewport!.height) {
-        window.scrollBy({
-          top: rect.bottom - window.visualViewport!.height + 20,
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    window.visualViewport?.addEventListener('resize', scrollWhenReady, { once: true });
-  }
-
-
-  public focusPassword(): void {
-    const el = document.querySelector('.password-input') as HTMLElement;
-
-    const scrollWhenReady = () => {
-      const rect = el?.getBoundingClientRect();
-      if (rect && rect.bottom > window.visualViewport!.height) {
-        window.scrollBy({
-          top: rect.bottom - window.visualViewport!.height + 20,
-          behavior: 'smooth'
-        });
-      }
-    };
-
-    window.visualViewport?.addEventListener('resize', scrollWhenReady, { once: true });
-  }
-
   private showError(message: string) {
     this.errorMessage.set(message);
 
