@@ -1,11 +1,16 @@
 <div class="main-container">
+  <img src="/svg/settings.svg" class="bg-cog" alt="">
   <form [formGroup]="loginForm" (ngSubmit)="submit()" class="login-form">
     <div class="logo">
       <img src="/icons/artificial-intellegence.png" alt="Robot Icon" class="logo-icon">
       <h1>RemoteCore</h1>
+      <p class="logo-subtitle">Welcome back. <br> Enter your credentials to continue.</p>
     </div>
 
-    <p class="error-message" *ngIf="errorMessage()">{{ errorMessage() }}
+    <p class="error-message" *ngIf="errorMessage()">
+      <img src="/icons/error.png" alt="Error Icon" class="error-icon">
+      <span>{{ errorMessage() }}</span>
+    </p>
 
     <div class="input-group">
       <mat-icon>person</mat-icon>
@@ -18,5 +23,13 @@
     </div>
 
     <button mat-raised-button color="primary" type="submit">Login</button>
+
+    <p class="contact-info">
+      <mat-icon>info_outline</mat-icon>
+      <span>Need an account?
+        <a href="mailto:duszakdamian034@gmail.com?subject=RemoteCore%20-%20Account%20Request&body=Hello%2C%20I%20would%20like%20to%20request%20access%20to%20RemoteCore.">Contact admin</a>
+      </span>
+    </p>
+
   </form>
 </div>

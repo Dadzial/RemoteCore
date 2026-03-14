@@ -29,16 +29,31 @@ export class LoginComponent {
 
   public submit() {
     if (this.loginForm.valid) {
-      const { username, password } = this.loginForm.value;
+      const {username, password} = this.loginForm.value;
 
       this.auth.login(username, password).subscribe({
+        next: () => {
+
+        },
         error: err => {
-          this.showError('Error in login or password');
+          if (err.status === 401) {
+            this.showError('Invalid username or password');
+          } else if (err.status === 429) {
+            this.showError('Too many login attempts. Please wait.');
+          } else if (err.status === 0) {
+            this.showError('Check your connection to server.');
+          } else {
+            this.showError('Something went wrong. Try again later.');
+          }
         }
       });
 
     } else {
-      this.showError('Enter Username and Password');
+      if (!this.loginForm.get('username')?.value) {
+        this.showError('Username is required');
+      } else if (!this.loginForm.get('password')?.value) {
+        this.showError('Password is required');
+      }
     }
   }
 

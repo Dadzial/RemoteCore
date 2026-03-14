@@ -25,6 +25,10 @@
               },
               {
                 "glob": "**/*",
+                "input": "public/svg"
+              },
+              {
+                "glob": "**/*",
                 "input": "public/icons"
               }
             ],
