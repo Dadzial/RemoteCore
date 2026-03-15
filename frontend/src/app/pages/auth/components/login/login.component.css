@@ -225,6 +225,10 @@ button[mat-raised-button] {
     justify-content: flex-start;
     padding-top: 80px;
     padding-bottom: 40px;
+
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .bg-cog {
