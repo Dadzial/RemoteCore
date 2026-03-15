@@ -241,5 +241,9 @@ button[mat-raised-button] {
     padding: 2rem 1.5rem 2rem 1.5rem;
   }
 
+  button[mat-raised-button] {
+    margin-top: 0.8rem;
+  }
+
 }
 
