@@ -17,7 +17,7 @@ class App {
         this.app = express();
         this.initializeMiddlewares();
         this.server = http.createServer(this.app);
-        this.initializeSocket();
+        this.initializeSocketServer();
         this.connectToDatabase();
     }
 
@@ -55,7 +55,7 @@ class App {
         });
     }
 
-    private initializeSocket(): void {
+    private initializeSocketServer(): void {
         this.io = new Server(this.server, {
             cors: {
                 origin: [
@@ -67,21 +67,6 @@ class App {
                 allowedHeaders: ["Authorization"],
                 credentials: true
             },
-        });
-
-        this.io.on("connection", (socket: Socket) => {
-            console.log(`Nowe połączenie: ${socket.id}`);
-
-
-            socket.on("message", (data: string) => {
-                console.log(`Wiadomość od ${socket.id}: ${data}`);
-                this.io.emit("message", data);
-            });
-
-
-            socket.on("disconnect", () => {
-                console.log(`Rozłączono: ${socket.id}`);
-            });
         });
     }
 
