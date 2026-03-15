@@ -14,12 +14,25 @@
 
     <div class="input-group">
       <mat-icon>person</mat-icon>
-      <input class="username-input"  formControlName="username" type="text" placeholder="Enter username"/>
+      <input
+        class="username-input"
+        formControlName="username"
+        type="text"
+        placeholder="Enter username"
+        autocomplete="off"
+        autocapitalize="none"
+      />
     </div>
 
     <div class="input-group">
       <mat-icon>lock</mat-icon>
-      <input class="password-input"  formControlName="password" type="password" placeholder="Enter password"/>
+      <input
+        class="password-input"
+        formControlName="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="new-password"
+      />
     </div>
 
     <button mat-raised-button color="primary" type="submit">Login</button>
