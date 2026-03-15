@@ -222,9 +222,8 @@ button[mat-raised-button] {
 @media (max-width: 450px) {
 
   .main-container {
-    justify-content: flex-start;
-    padding-top: 80px;
-    padding-bottom: 40px;
+    justify-content: center;
+    align-items: center;
   }
 
   .login-form {
