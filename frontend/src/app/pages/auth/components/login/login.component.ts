@@ -4,7 +4,7 @@ import {MatButton} from '@angular/material/button';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {LoginService} from '../../services/login/login.service';
 import {NgIf} from '@angular/common';
-
+import {AfterViewInit} from '@angular/core';
 @Component({
   selector: 'app-login',
   imports: [
@@ -16,7 +16,7 @@ import {NgIf} from '@angular/common';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit{
   loginForm: FormGroup;
   errorMessage = signal('');
 
@@ -24,6 +24,21 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
+    });
+  }
+
+  ngAfterViewInit(): void {
+    const inputs = document.querySelectorAll('input');
+
+    inputs.forEach((input: any) => {
+      input.addEventListener('focus', () => {
+        setTimeout(() => {
+          input.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 300);
+      });
     });
   }
 
