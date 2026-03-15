@@ -228,11 +228,12 @@ button[mat-raised-button] {
   }
 
   .bg-cog {
-    top: 5%;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
+    transform: translate(-50%, -40%);
+    width: 500px;
+    height: 500px;
   }
 
   .login-form {
