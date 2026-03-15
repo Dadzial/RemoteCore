@@ -222,8 +222,17 @@ button[mat-raised-button] {
 @media (max-width: 450px) {
 
   .main-container {
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+
+  .bg-cog {
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
   }
 
   .login-form {
