@@ -2,15 +2,6 @@ import wsControllerInterface from "../interfaces/ws-controller.interface";
 import { Server, Socket } from "socket.io";
 import logger from "../utils/logger";
 
-/**
- * Pierwszy podstawowy kontroler dla robota będzie pytac się o status jest online lub nie
- * Nie mamy robota fizycznie wiec poradzimy sobie inaczej ale równie dobrze na dole projektu
- * znajdziesz fragmenty kodu są to przerobione pod websockety fragmenty kodu z robota pod udp
- * i do nich bedziesz się odnosił piszac kontrolery w kazdym będzie metoda initializeWebSocketHandler
- * w tym kontrolerze bedzie uzyta tylko ona i użyj też loggera zawsze w zasadzie go używaj gdy
- * zrobisz ten kontroler przedz do steering.controller.ts
- * **/
-
 class ConnectionController implements  wsControllerInterface {
     public io: Server;
 
@@ -19,9 +10,22 @@ class ConnectionController implements  wsControllerInterface {
         this.initializeWebSocketHandler();
     }
 
-    public initializeWebSocketHandler() : void {
+    public initializeWebSocketHandler(): void {
+        this.io.on('connection', (socket: Socket) => {
+            logger.info(`New Socket Connection: ${socket.id}`);
 
+            socket.on('connection:robot-online', (data: any) => {
+                const firmware = data.firmwareVersion || 'unknown';
+            });
+
+            socket.on('disconnect', (reason) => {
+                logger.info(`Device disconnected (${socket.id}). Reason: ${reason}`);
+            });
+
+            socket.on('error', (err) => {
+                logger.error(`Socket error (${socket.id})`, err);
+            });
+        });
     }
-
 }
 export default ConnectionController;
