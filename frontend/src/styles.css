@@ -5,6 +5,7 @@
   --color-secondary: #07C71E;
   --color-background: #212529;
   --color-text: #212529;
+  --color-shadow : rgba(0, 0, 0, 0.35)
 }
 
 html,body {

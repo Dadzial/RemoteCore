@@ -19,7 +19,12 @@ export class LoginService {
 
   private readonly api_url = environment.api.url + '/api/user';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    const token = this.getToken();
+    if (token) {
+      this.isLoggedIn.set(true);
+    }
+  }
 
   public login(username: string, password: string) {
     return this.http.post<LoginResponse>(this.api_url + '/auth', { login:username, password }).pipe(
