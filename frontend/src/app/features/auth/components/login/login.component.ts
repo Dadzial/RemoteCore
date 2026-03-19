@@ -1,6 +1,6 @@
 import {Component, signal} from '@angular/core';
 import {FormBuilder, FormGroup ,Validators} from '@angular/forms';
-import {LoginService} from '../../services/login/login.service';
+import {AuthService} from '../../../../core/global-services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -8,11 +8,11 @@ import {LoginService} from '../../services/login/login.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent{
+export class LoginComponent {
   loginForm: FormGroup;
   errorMessage = signal('');
 
-  constructor(private fb: FormBuilder, private auth: LoginService) {
+  constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -23,7 +23,7 @@ export class LoginComponent{
     if (this.loginForm.valid) {
       const {username, password} = this.loginForm.value;
 
-      this.auth.login(username, password).subscribe({
+      this.authService.login(username, password).subscribe({
         next: () => {
 
         },
