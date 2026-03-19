@@ -1,6 +1,6 @@
 import {Injectable, signal} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import {environment} from '../../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {tap} from 'rxjs';
 
@@ -12,8 +12,7 @@ interface LoginResponse {
 @Injectable({
   providedIn: 'root',
 })
-export class LoginService {
-
+export class AuthService {
   isLoggedIn = signal(false);
   username = signal<string | null>(null);
 
@@ -35,6 +34,30 @@ export class LoginService {
         this.router.navigate(['/dashboard/home']);
       })
     );
+  }
+
+  public getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId || null;
+    } catch (e) {
+      console.error('Error:', e);
+      return null;
+    }
+  }
+
+  public getDisplayName(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.name || null;
+    } catch (e) {
+      return null;
+    }
   }
 
   public getToken(): string | null {

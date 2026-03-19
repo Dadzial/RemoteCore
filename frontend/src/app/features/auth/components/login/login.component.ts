@@ -1,18 +1,10 @@
 import {Component, signal} from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import {MatButton} from '@angular/material/button';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup ,Validators} from '@angular/forms';
 import {LoginService} from '../../services/login/login.service';
-import {NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [
-    MatIconModule,
-    MatButton,
-    ReactiveFormsModule,
-    NgIf
-  ],
+  standalone: false,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

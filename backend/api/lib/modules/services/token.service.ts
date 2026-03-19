@@ -7,7 +7,7 @@ class TokenService {
         const access = 'auth';
         const userData = {
             userId: user.id,
-            name: user.email,
+            name: user.name,
             access: access
         };
 
