@@ -15,7 +15,12 @@ class ConnectionController implements  wsControllerInterface {
             logger.info(`New Socket Connection: ${socket.id}`);
 
             socket.on('connection:robot-online', (data: any) => {
-                const firmware = data.firmwareVersion || 'unknown';
+                logger.info(`Robot connected with firmware: ${data.firmwareVersion}`);
+
+                socket.emit('robot-status-confirmed', {
+                    status: 'success',
+                    message: 'Robot is now registered'
+                });
             });
 
             socket.on('disconnect', (reason) => {
