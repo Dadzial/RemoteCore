@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
 
 @Component({
   selector: 'app-steering',
@@ -11,10 +12,14 @@ export class SteeringComponent {
 
   thumbStyle = { transform: 'translate(0px, 0px)' };
 
+  constructor(private ws: WsSteeringService) {}
+
   private dragging = false;
   private maxRadius = 60;
 
   onStart(event: MouseEvent | TouchEvent) {
+    event.preventDefault();
+    event.stopPropagation();
     this.dragging = true;
     this.onMove(event);
   }
@@ -23,7 +28,6 @@ export class SteeringComponent {
   @HostListener('window:touchmove', ['$event'])
   onMove(event: MouseEvent | TouchEvent) {
     if (!this.dragging) return;
-
 
     if (event instanceof TouchEvent) event.preventDefault();
 
@@ -55,6 +59,7 @@ export class SteeringComponent {
     if (!this.dragging) return;
     this.dragging = false;
     this.updatePosition(0, 0);
+    this.sendStop();
   }
 
   private updatePosition(x: number, y: number) {
@@ -65,5 +70,20 @@ export class SteeringComponent {
     const percentX = x / this.maxRadius;
     const percentY = (y / this.maxRadius) * -1;
 
+    this.sendSteeringCommand(percentY, percentX);
+  }
+
+  private sendSteeringCommand(y :number ,x :number): void {
+    let left = y - x
+    let right = y + x
+
+    left = Math.max(-100, Math.min(100, left));
+    right = Math.max(-100, Math.min(100, right));
+
+    this.ws.sendSteeringCommand(left, right);
+  }
+
+  private sendStop(): void {
+    this.ws.sendStop();
   }
 }
