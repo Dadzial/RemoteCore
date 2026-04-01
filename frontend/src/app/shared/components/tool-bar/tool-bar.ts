@@ -17,6 +17,7 @@ export class ToolBar implements OnInit {
   constructor(private authService: AuthService,private ws: WebSocketService, private logoutService: LogoutService, private router: Router) {}
   private sub?: Subscription;
   displayName: string | null = null;
+  isRobotConnected: boolean = false;
 
   ngOnInit(): void {
     this.ws.connect(environment.api.url);
@@ -24,6 +25,7 @@ export class ToolBar implements OnInit {
 
     this.sub = this.ws.on('robot-status-confirmed').subscribe((data) => {
       console.log('Serwer :', data);
+      this.isRobotConnected = true;
     });
 
     this.ws.emit('connection:robot-online', { firmwareVersion: '1.0.2' });

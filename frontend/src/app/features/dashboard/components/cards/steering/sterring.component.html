@@ -6,11 +6,41 @@
     <h2>Control</h2>
   </div>
 
-  <div class="joystick-wrapper" #container
-       (mousedown)="onStart($event)"
-       (touchstart)="onStart($event)">
-    <div class="base">
-      <div class="thumb" [ngStyle]="thumbStyle"></div>
+  <div class="joystick-section">
+    <p class="wrapper-label">Joystick Control</p>
+    <div class="telemetry">
+      <span>X: {{joyStickPos().x.toPrecision(2)}}%</span>
+      <span>Y: {{joyStickPos().y.toPrecision(2)}}%</span>
+    </div>
+    <div class="joystick-wrapper" #container
+         (mousedown)="onStart($event)"
+         (touchstart)="onStart($event)">
+      <div class="base">
+        <div class="thumb" [ngStyle]="thumbStyle"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="speed-section">
+    <p class="wrapper-label">Speed Mode</p>
+    <div class="control-speed-wrapper">
+      <button
+        class="control-button"
+        (click)="onCommandClick(SteeringCommands.Slow)">
+        {{ SteeringCommands.Slow | titlecase }}
+      </button>
+
+      <button
+        class="control-button"
+        (click)="onCommandClick(SteeringCommands.Medium)">
+        {{ SteeringCommands.Medium | titlecase }}
+      </button>
+
+      <button
+        class="control-button"
+        (click)="onCommandClick(SteeringCommands.Fast)">
+        {{ SteeringCommands.Fast | titlecase }}
+      </button>
     </div>
   </div>
 </div>

@@ -4,7 +4,9 @@
     <h1>RemoteCore</h1>
   </div>
   <div class="connection-status">
-    <img src="/icons/wi-fi.png" alt="Connection Icon" class="connection-icon">
+    <img [src]="isRobotConnected ? '/icons/wi-fi-green.png' : '/icons/wi-fi.png'"
+         alt="Connection Icon"
+         class="connection-icon">
   </div>
   <div class="user-menu">
     <img src="/icons/user.png" alt="User Icon" class="user-icon">

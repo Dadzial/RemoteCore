@@ -1,5 +1,11 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, ViewChild, signal, computed} from '@angular/core';
 import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
+
+export enum SteeringCommands {
+  Fast = 'fast',
+  Medium = 'medium',
+  Slow = 'slow',
+}
 
 @Component({
   selector: 'app-steering',
@@ -10,7 +16,21 @@ import {WsSteeringService} from '../../../services/ws-steering/ws-steering.servi
 export class SteeringComponent {
   @ViewChild('container') container!: ElementRef;
 
-  thumbStyle = { transform: 'translate(0px, 0px)' };
+
+  protected readonly SteeringCommands = SteeringCommands;
+  public joyStickPos = signal({x: 0, y: 0});
+
+  public readonly thumbStyle = computed(() => ({
+    transform: `translate(${this.joyStickPos().x}px, ${this.joyStickPos().y}px)`
+  }));
+
+  public readonly joystickValues = computed(() => {
+    const { x, y } = this.joyStickPos();
+    return {
+      x: Math.round((x / this.maxRadius) * 100),
+      y: Math.round(((y / this.maxRadius) * -1) * 100)
+    };
+  });
 
   constructor(private ws: WsSteeringService) {}
 
@@ -41,9 +61,7 @@ export class SteeringComponent {
     let deltaX = clientX - centerX;
     let deltaY = clientY - centerY;
 
-
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
 
     if (distance > this.maxRadius) {
       deltaX *= this.maxRadius / distance;
@@ -63,14 +81,8 @@ export class SteeringComponent {
   }
 
   private updatePosition(x: number, y: number) {
-    this.thumbStyle = {
-      transform: `translate(${x}px, ${y}px)`
-    };
-
-    const percentX = x / this.maxRadius;
-    const percentY = (y / this.maxRadius) * -1;
-
-    this.sendSteeringCommand(percentY, percentX);
+    this.joyStickPos.set({ x, y });
+    this.sendSteeringCommand(y / this.maxRadius * -1, x / this.maxRadius);
   }
 
   private sendSteeringCommand(y :number ,x :number): void {
@@ -81,6 +93,10 @@ export class SteeringComponent {
     right = Math.max(-100, Math.min(100, right));
 
     this.ws.sendSteeringCommand(left, right);
+  }
+
+  public onCommandClick(command: SteeringCommands) : void {
+    console.log("Send Command",command);
   }
 
   private sendStop(): void {
