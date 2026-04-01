@@ -7,9 +7,12 @@ class SteeringController implements wsControllerInterface {
     public io: Server;
 
     private steeringSchema = Joi.object({
-        leftMotor: Joi.number().integer().min(-100).max(100).required(),
-        rightMotor: Joi.number().integer().min(-100).max(100).required()
+        leftMotor: Joi.number().integer().min(-200).max(200).required(),
+        rightMotor: Joi.number().integer().min(-200).max(200).required()
     });
+    private speedSchema = Joi.object({
+        speed: Joi.number().min(0).max(200).required(),
+    })
 
     constructor(io: Server) {
         this.io = io;
@@ -24,7 +27,7 @@ class SteeringController implements wsControllerInterface {
                 const { error, value } = this.steeringSchema.validate(payload?.data);
 
                 if (error) {
-                    logger.error(`[Steering] Incorrect steering input ${error.message}`);
+                    logger.error(`[Steering] Incorrect command: ${error.message}`);
                     return;
                 }
 
@@ -34,6 +37,22 @@ class SteeringController implements wsControllerInterface {
                 });
 
                 logger.info(`[Steering] Command sent: L:${value.leftMotor} R:${value.rightMotor}`);
+            });
+
+            socket.on('speed:command', (payload: any) => {
+                const { error, value } = this.speedSchema.validate(payload?.data);
+
+                if (error) {
+                    logger.error(`[Steering] Incorrect speed: ${error.message}`);
+                    return;
+                }
+
+                this.io.emit('speed:command', {
+                    event: 'speed:command',
+                    data: value
+                });
+
+                logger.info(`[Steering] speed: ${value.speed}`);
             });
 
             socket.on('steering:stop', () => {

@@ -15,8 +15,11 @@
     <div class="joystick-wrapper" #container
          (mousedown)="onStart($event)"
          (touchstart)="onStart($event)">
-      <div class="base">
-        <div class="thumb" [ngStyle]="thumbStyle"></div>
+      <div class="base" [class.active]="dragging"> <!-- Klasa active dla lepszego wyglądu przy dotyku -->
+        <div class="thumb" [ngStyle]="thumbStyle()"></div> <!-- TUTAJ: thumbStyle() z nawiasami! -->
+        <div class="rings">
+          <span></span><span></span><span></span>
+        </div>
       </div>
     </div>
   </div>

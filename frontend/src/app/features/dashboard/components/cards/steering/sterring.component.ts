@@ -16,7 +16,6 @@ export enum SteeringCommands {
 export class SteeringComponent {
   @ViewChild('container') container!: ElementRef;
 
-
   protected readonly SteeringCommands = SteeringCommands;
   public joyStickPos = signal({x: 0, y: 0});
 
@@ -34,7 +33,7 @@ export class SteeringComponent {
 
   constructor(private ws: WsSteeringService) {}
 
-  private dragging = false;
+  public dragging = false;
   private maxRadius = 60;
 
   onStart(event: MouseEvent | TouchEvent) {
@@ -96,7 +95,21 @@ export class SteeringComponent {
   }
 
   public onCommandClick(command: SteeringCommands) : void {
-    console.log("Send Command",command);
+    let power: number;
+    switch (command) {
+      case SteeringCommands.Fast:
+        power = 1;
+        break;
+      case SteeringCommands.Medium:
+        power = 0.5;
+        break;
+      case SteeringCommands.Slow:
+        power = 0.25;
+        break;
+      default:
+        power = 0;
+    }
+    this.ws.sendSpeedCommand(power);
   }
 
   private sendStop(): void {
