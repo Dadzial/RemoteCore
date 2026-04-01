@@ -6,4 +6,6 @@ import { Component } from '@angular/core';
   templateUrl: './gryo.component.html',
   styleUrl: './gryo.component.css',
 })
-export class GryoComponent {}
+export class GryoComponent {
+
+}
