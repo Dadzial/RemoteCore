@@ -97,7 +97,33 @@ void handleMessage(uint8_t* payload) {
    
 }
 ```
+#### gryo.controller.ts
 
+```ts
+void sendImuData() {
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  filter.updateIMU(
+    g.gyro.x, g.gyro.y, g.gyro.z,
+    a.acceleration.x, a.acceleration.y, a.acceleration.z
+  );
+
+  StaticJsonDocument<128> doc;
+  doc["event"]          = "gyro:data";
+  doc["data"]["roll"]   = filter.getRoll();
+  doc["data"]["pitch"]  = filter.getPitch();
+  doc["data"]["yaw"]    = filter.getYaw();
+  doc["data"]["ax"]     = a.acceleration.x;
+  doc["data"]["ay"]     = a.acceleration.y;
+  doc["data"]["az"]     = a.acceleration.z;
+  doc["data"]["timestamp"] = millis();
+
+  String output;
+  serializeJson(doc, output);
+  webSocket.sendTXT(output);
+}
+```
 
 
 
