@@ -6,6 +6,7 @@
   --color-background: #171717;
   --color-text: #212529;
   --color-shadow : rgba(0, 0, 0, 0.35)
+  --color-accent
 }
 
 html,body {
