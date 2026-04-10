@@ -84,16 +84,15 @@ export class SteeringComponent {
     this.sendSteeringCommand(y / this.maxRadius * -1, x / this.maxRadius);
   }
 
-  private sendSteeringCommand(y :number ,x :number): void {
-    let left = y - x
-    let right = y + x
+  private sendSteeringCommand(y: number, x: number): void {
+    let left = (y - x) * 100;
+    let right = (y + x) * 100;
 
     left = Math.max(-100, Math.min(100, left));
     right = Math.max(-100, Math.min(100, right));
 
     this.ws.sendSteeringCommand(left, right);
   }
-
   public onCommandClick(command: SteeringCommands) : void {
     let power: number;
     switch (command) {
