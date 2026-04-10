@@ -18,15 +18,6 @@ export class WsSteeringService {
     this.ws.emit('steering:command', payload);
   }
 
-  public sendSpeedCommand(power : number): void {
-    const payload = {
-      data: {
-        speed: Math.round(power * 200),
-      }
-    };
-    this.ws.emit('speed:command', payload);
-  }
-
   public sendStop(): void {
     this.ws.emit('steering:stop');
   }

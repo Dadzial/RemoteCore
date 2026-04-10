@@ -145,4 +145,10 @@
   overflow: hidden;
 }
 
+.control-button.active {
+  background-color: var(--color-accent, #4a9eff);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(74, 158, 255, 0.4);
+}
+
 

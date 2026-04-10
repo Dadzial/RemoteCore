@@ -18,18 +18,11 @@ export class SteeringComponent {
 
   protected readonly SteeringCommands = SteeringCommands;
   public joyStickPos = signal({x: 0, y: 0});
+  public speedMultiplier = signal(0.5);
 
   public readonly thumbStyle = computed(() => ({
     transform: `translate(${this.joyStickPos().x}px, ${this.joyStickPos().y}px)`
   }));
-
-  public readonly joystickValues = computed(() => {
-    const { x, y } = this.joyStickPos();
-    return {
-      x: Math.round((x / this.maxRadius) * 100),
-      y: Math.round(((y / this.maxRadius) * -1) * 100)
-    };
-  });
 
   constructor(private ws: WsSteeringService) {}
 
@@ -85,30 +78,23 @@ export class SteeringComponent {
   }
 
   private sendSteeringCommand(y: number, x: number): void {
-    let left = (y - x) * 100;
-    let right = (y + x) * 100;
+    const speed = this.speedMultiplier();
 
-    left = Math.max(-100, Math.min(100, left));
+    let left  = (y + x) * 100 * speed;
+    let right = (y - x) * 100 * speed;
+
+    left  = Math.max(-100, Math.min(100, left));
     right = Math.max(-100, Math.min(100, right));
 
     this.ws.sendSteeringCommand(left, right);
   }
-  public onCommandClick(command: SteeringCommands) : void {
-    let power: number;
+
+  public onCommandClick(command: SteeringCommands): void {
     switch (command) {
-      case SteeringCommands.Fast:
-        power = 1;
-        break;
-      case SteeringCommands.Medium:
-        power = 0.5;
-        break;
-      case SteeringCommands.Slow:
-        power = 0.25;
-        break;
-      default:
-        power = 0;
+      case SteeringCommands.Fast:   this.speedMultiplier.set(1);    break;
+      case SteeringCommands.Medium: this.speedMultiplier.set(0.5);  break;
+      case SteeringCommands.Slow:   this.speedMultiplier.set(0.25); break;
     }
-    this.ws.sendSpeedCommand(power);
   }
 
   private sendStop(): void {

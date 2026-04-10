@@ -29,18 +29,21 @@
     <div class="control-speed-wrapper">
       <button
         class="control-button"
+        [class.active]="speedMultiplier() === 0.25"
         (click)="onCommandClick(SteeringCommands.Slow)">
         {{ SteeringCommands.Slow | titlecase }}
       </button>
 
       <button
         class="control-button"
+        [class.active]="speedMultiplier() === 0.5"
         (click)="onCommandClick(SteeringCommands.Medium)">
         {{ SteeringCommands.Medium | titlecase }}
       </button>
 
       <button
         class="control-button"
+        [class.active]="speedMultiplier() === 1"
         (click)="onCommandClick(SteeringCommands.Fast)">
         {{ SteeringCommands.Fast | titlecase }}
       </button>
