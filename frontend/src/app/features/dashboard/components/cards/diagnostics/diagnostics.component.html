@@ -8,6 +8,24 @@
 
   <div class="view-section">
     <p class="wrapper-label">View</p>
+    <div class="canvas-wrapper">
+      <ngt-canvas [camera]="{ position: [4, 3, 5] }">
+        <ng-template canvasContent>
+          <ngt-ambient-light [intensity]="0.5" />
+          <ngt-point-light [position]="[10, 10, 10]" />
+
+          <ngts-orbit-controls/>
+
+          <ngt-mesh [position]="[0, 0.5, 0]">
+            <ngt-box-geometry />
+            <ngt-mesh-standard-material color="red" />
+          </ngt-mesh>
+
+
+          <ngt-grid-helper *args="[10, 10]" />
+        </ng-template>
+      </ngt-canvas>
+    </div>
   </div>
 
   <div class="logs-section">
@@ -19,5 +37,4 @@
       <div class="log-entry warning"><span class="timestamp">[21:44:10]</span> Battery at 85%</div>
     </div>
   </div>
-
 </div>

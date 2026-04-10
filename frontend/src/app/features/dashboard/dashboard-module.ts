@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule ,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing-module';
 import {SharedModule} from '../../shared/shared-module';
@@ -8,9 +8,14 @@ import {SpeedComponent} from './components/cards/speed/speed.component';
 import {DiagnosticsComponent} from './components/cards/diagnostics/diagnostics.component';
 import {CameraComponent} from './components/cards/camera/camera.component';
 import {SteeringComponent} from './components/cards/steering/sterring.component';
+import {NgtCanvas, NgtCanvasContent, NgtCanvasImpl} from 'angular-three/dom';
+import {NgtArgs} from 'angular-three';
+import { NgtsOrbitControls } from 'angular-three-soba/controls';
+
 
 @NgModule({
   declarations: [HomeComponent,SteeringComponent,GryoComponent,SpeedComponent,DiagnosticsComponent,CameraComponent],
-  imports: [CommonModule, DashboardRoutingModule,SharedModule],
+  imports: [CommonModule, DashboardRoutingModule, SharedModule, ...NgtCanvas, NgtCanvasImpl, NgtCanvasContent, NgtArgs,NgtsOrbitControls],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DashboardModule {}
