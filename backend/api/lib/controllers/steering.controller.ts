@@ -7,8 +7,8 @@ class SteeringController implements wsControllerInterface {
     public io: Server;
 
     private steeringSchema = Joi.object({
-        leftMotor: Joi.number().integer().min(-200).max(200).required(),
-        rightMotor: Joi.number().integer().min(-200).max(200).required()
+        leftMotor:  Joi.number().integer().min(-100).max(100).required(),
+        rightMotor: Joi.number().integer().min(-100).max(100).required()
     });
     private speedSchema = Joi.object({
         speed: Joi.number().min(0).max(200).required(),
@@ -47,19 +47,18 @@ class SteeringController implements wsControllerInterface {
                     return;
                 }
 
-                this.io.emit('speed:command', {
-                    event: 'speed:command',
-                    data: value
+                this.io.emit('steering:command', {
+                    data: {
+                        leftMotor: value.leftMotor,
+                        rightMotor: value.rightMotor
+                    }
                 });
 
                 logger.info(`[Steering] speed: ${value.speed}`);
             });
 
             socket.on('steering:stop', () => {
-                this.io.emit('steering:stop', {
-                    event: 'steering:stop'
-                });
-
+                this.io.emit('steering:stop');
                 logger.info(`[Steering] STOP command has been sent`);
             });
 
