@@ -41,3 +41,30 @@ app-diagnostics {
   grid-column: 1;
   grid-row: 1 / span 2;
 }
+
+{/*Media queries*/}
+
+@media (max-width: 400px) {
+
+}
+
+
+@media (max-width: 600px) {
+
+}
+
+
+@media (max-width: 800px) {
+
+}
+
+
+@media (max-width: 1024px) {
+
+}
+
+@media (max-width: 1280px) {
+
+}
+
+
