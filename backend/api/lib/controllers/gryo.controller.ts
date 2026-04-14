@@ -3,12 +3,18 @@ import { Server, Socket } from "socket.io";
 import logger from "../utils/logger";
 import Joi from 'joi';
 
-//TODO Tutaj przygotujesz następny kontroler , który będzie jak wcześniej odbierać dane z robota i przesyłać je na frontend
-//TODO w README masz kod podpisany gryo.controller do niego masz napisać ten kontroler 
-
-
 class GryoController implements wsControllerInterface {
     public io: Server;
+
+    private gyroSchema = Joi.object({
+        roll: Joi.number().required(),
+        pitch: Joi.number().required(),
+        yaw: Joi.number().required(),
+        ax: Joi.number().required(),
+        ay: Joi.number().required(),
+        az: Joi.number().required(),
+        timestamp: Joi.number().required()
+    });
 
     constructor(io: Server) {
         this.io = io;
@@ -16,7 +22,46 @@ class GryoController implements wsControllerInterface {
     }
 
     public initializeWebSocketHandler(): void {
+        this.io.on('connection', (socket: Socket) => {
+            logger.info(`[Gyro] New Connection: ${socket.id}`);
 
+            socket.on('gyro:data', (payload: any) => {
+                let parsedData = payload;
+                if (typeof payload === 'string') {
+                    try {
+                        parsedData = JSON.parse(payload);
+                    } catch (e) {
+                        logger.error('[Gyro] Invalid JSON string received');
+                        return;
+                    }
+                }
+
+                const incomingData = parsedData?.data || parsedData;
+
+                const { error, value } = this.gyroSchema.validate(incomingData, { convert: true });
+
+                if (error) {
+                    logger.error(`[Gyro] Incorrect data format: ${error.message}`);
+                    return;
+                }
+
+                this.io.emit('gyro:data', {
+                    event: 'gyro:data',
+                    data: value
+                });
+
+                // Optional: log periodically or log every packet (might be noisy)
+                // logger.info(`[Gyro] Forwarded IMU data: Roll=${value.roll}, Pitch=${value.pitch}, Yaw=${value.yaw}`);
+            });
+
+            socket.on('disconnect', () => {
+                logger.info(`[Gyro] Disconnected: ${socket.id}`);
+            });
+
+            socket.on('error', (err) => {
+                logger.error(`[Gyro] Socket error (${socket.id})`, err);
+            });
+        });
     }
 }
 
