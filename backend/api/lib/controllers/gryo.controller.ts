@@ -50,8 +50,7 @@ class GryoController implements wsControllerInterface {
                     data: value
                 });
 
-                // Optional: log periodically or log every packet (might be noisy)
-                // logger.info(`[Gyro] Forwarded IMU data: Roll=${value.roll}, Pitch=${value.pitch}, Yaw=${value.yaw}`);
+                logger.info(`[Gyro] Forwarded IMU data: Roll=${value.roll}, Pitch=${value.pitch}, Yaw=${value.yaw}`);
             });
 
             socket.on('disconnect', () => {
