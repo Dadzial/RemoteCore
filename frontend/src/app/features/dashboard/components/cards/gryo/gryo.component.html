@@ -5,24 +5,22 @@
     </div>
     <h2>Gyroscope</h2>
   </div>
-  <div class="data-content">
-    <div class="acceleraion-data">
-      <p class="section-label">Acceleration</p>
-      <div class="data-acc-item">X: 0.00</div>
-      <div class="data-acc-item">Y: 0.00</div>
-      <div class="data-acc-item">Z: 0.00</div>
-    </div>
-    <div class ="interacitve-view">
-
-    </div>
-    <div class="gyroscope-data">
-      <p class="section-label">Position</p>
-      <div class="data-gyro-item">P: 0.00</div>
-      <div class="data-gyro-item">R: 0.00</div>
-      <div class="data-gyro-item">Y: 0.00</div>
+  <div *ngIf="gyroData">
+    <div class="data-content">
+      <div class="acceleraion-data">
+        <p class="section-label">Acceleration</p>
+        <div class="data-acc-item">X: {{ gyroData.ax | number:'1.2-2' }}</div>
+        <div class="data-acc-item">Y: {{ gyroData.ay | number:'1.2-2' }}</div>
+        <div class="data-acc-item">Z: {{ gyroData.az | number:'1.2-2' }}</div>
+      </div>
+      <div class="interacitve-view">
+      </div>
+      <div class="gyroscope-data">
+        <p class="section-label">Position</p>
+        <div class="data-gyro-item">P: {{ gyroData.pitch | number:'1.2-2' }}</div>
+        <div class="data-gyro-item">R: {{ gyroData.roll | number:'1.2-2' }}</div>
+        <div class="data-gyro-item">Y: {{ gyroData.yaw | number:'1.2-2' }}</div>
+      </div>
     </div>
   </div>
-
 </div>
-
-

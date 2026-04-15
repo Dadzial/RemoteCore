@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {GyroData, WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-gryo',
@@ -6,6 +8,19 @@ import { Component } from '@angular/core';
   templateUrl: './gryo.component.html',
   styleUrl: './gryo.component.css',
 })
-export class GryoComponent {
+export class GryoComponent implements OnInit , OnDestroy {
+  public gyroData?: GyroData;
+  private sub?: Subscription;
 
+  constructor(private ws:WsGyroService) {}
+
+  ngOnInit() {
+    this.sub = this.ws.getGyroData$().subscribe((data: GyroData | undefined) => {
+      this.gyroData = data;
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe()
+  }
 }
