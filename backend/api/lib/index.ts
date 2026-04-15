@@ -3,6 +3,7 @@ import UserController from "./controllers/user.controller";
 import SteeringController from "./controllers/steering.controller";
 import ConnectionController from "./controllers/connection.controller";
 import GryoController from "./controllers/gryo.controller";
+import LidarController from "./controllers/lidar.controller";
 
 const app = new App();
 const io = app.getIo();
@@ -14,6 +15,7 @@ const controllers = [
 ]
 
 const wsControllers = [
+    new LidarController(io),
     new GryoController(io),
     new SteeringController(io),
     new ConnectionController(io)
