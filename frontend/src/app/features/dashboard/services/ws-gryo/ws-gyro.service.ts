@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebSocketService } from '../web-socket/web-socket.service';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface GyroData {
   roll: number;
@@ -16,27 +17,20 @@ export interface GyroData {
   providedIn: 'root',
 })
 export class WsGyroService {
-  private gyroDataSubject = new Subject<GyroData>();
 
-  constructor(private ws: WebSocketService) {
-    this.ws.on<any>('gyro:data').subscribe((data: any) => {
-      let payload = Array.isArray(data) && data.length > 1 ? data[1] : (data.data || data);
-      if (Array.isArray(data) && data.length > 1) {
-        payload = data[1];
-      }
-      this.gyroDataSubject.next({
-        roll: payload.roll,
-        pitch: payload.pitch,
-        yaw: payload.yaw,
-        ax: payload.ax,
-        ay: payload.ay,
-        az: payload.az,
-        timestamp: payload.timestamp,
-      });
-    });
-  }
+  constructor(private ws: WebSocketService) {}
 
   getGyroData$(): Observable<GyroData> {
-    return this.gyroDataSubject.asObservable();
+    return this.ws.on<any>('gyro:data').pipe(
+      map((data: any) => ({
+        roll: data.roll,
+        pitch: data.pitch,
+        yaw: data.yaw,
+        ax: data.ax,
+        ay: data.ay,
+        az: data.az,
+        timestamp: data.timestamp,
+      }))
+    );
   }
 }
