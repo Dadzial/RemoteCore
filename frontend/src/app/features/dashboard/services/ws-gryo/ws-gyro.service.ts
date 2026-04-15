@@ -20,7 +20,7 @@ export class WsGyroService {
 
   constructor(private ws: WebSocketService) {
     this.ws.on<any>('gyro:data').subscribe((data: any) => {
-      let payload = data;
+      let payload = Array.isArray(data) && data.length > 1 ? data[1] : (data.data || data);
       if (Array.isArray(data) && data.length > 1) {
         payload = data[1];
       }
