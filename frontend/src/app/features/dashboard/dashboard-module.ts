@@ -15,7 +15,7 @@ import { NgtsOrbitControls } from 'angular-three-soba/controls';
 
 @NgModule({
   declarations: [HomeComponent,SteeringComponent,GryoComponent,SpeedComponent,DiagnosticsComponent,CameraComponent],
-  imports: [CommonModule, DashboardRoutingModule, SharedModule, ...NgtCanvas, NgtCanvasImpl, NgtCanvasContent, NgtArgs,NgtsOrbitControls],
+  imports: [CommonModule, DashboardRoutingModule, SharedModule, ...NgtCanvas, NgtCanvasImpl, NgtCanvasContent, NgtArgs,NgtsOrbitControls,],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DashboardModule {}

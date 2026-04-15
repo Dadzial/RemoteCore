@@ -1,11 +1,11 @@
 <div class="container">
   <div class="header">
     <div class="icon">
-      <img src="/icons/gyroscope.png" alt="Gyroscope Icon" class="gyroscope-icon">
+      <img ngSrc="/icons/gyroscope.png" alt="Gyroscope Icon" class="gyroscope-icon" width="32" height="32">
     </div>
     <h2>Gyroscope</h2>
   </div>
-  <div *ngIf="gyroData">
+  @if (gyroData) {
     <div class="data-content">
       <div class="acceleraion-data">
         <p class="section-label">Acceleration</p>
@@ -13,8 +13,7 @@
         <div class="data-acc-item">Y: {{ gyroData.ay | number:'1.2-2' }}</div>
         <div class="data-acc-item">Z: {{ gyroData.az | number:'1.2-2' }}</div>
       </div>
-      <div class="interacitve-view">
-      </div>
+      <div class="interacitve-view"></div>
       <div class="gyroscope-data">
         <p class="section-label">Position</p>
         <div class="data-gyro-item">P: {{ gyroData.pitch | number:'1.2-2' }}</div>
@@ -22,5 +21,5 @@
         <div class="data-gyro-item">Y: {{ gyroData.yaw | number:'1.2-2' }}</div>
       </div>
     </div>
-  </div>
+  }
 </div>
