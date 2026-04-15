@@ -16,7 +16,11 @@ export class WebSocketService {
 
   public on<T>(event: string): Observable<T> {
     return new Observable((observer) => {
-      this.socket?.on(event, (data: T) => observer.next(data));
+      if (!this.socket) {
+        console.error(`[WS] Socket not connected! Call connect() before on('${event}')`);
+        return;
+      }
+      this.socket.on(event, (data: T) => observer.next(data));
       return () => this.socket?.off(event);
     });
   }
