@@ -42,8 +42,6 @@ app-diagnostics {
   grid-row: 1 / span 2;
 }
 
-{/*Media queries*/}
-
 @media (max-width: 600px) {
 
 }
