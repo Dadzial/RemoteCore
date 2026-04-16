@@ -11,15 +11,19 @@
     <div class="canvas-wrapper">
       <ngt-canvas [camera]="{ position: [4, 3, 5] }">
         <ng-template canvasContent>
-          <ngt-ambient-light [intensity]="0.5" />
+          <ngt-ambient-light [intensity]="1.5" />
           <ngt-point-light [position]="[10, 10, 10]" />
-
           <ngts-orbit-controls/>
 
-          <ngt-mesh [position]="[0, 0.5, 0]">
-            <ngt-box-geometry />
-            <ngt-mesh-standard-material color="red" />
-          </ngt-mesh>
+          @if (RobotModel.scene(); as scene) {
+            <ngt-primitive *args="[scene]" />
+
+          } @else if (RobotModel.isLoading()) {
+            <ngt-mesh [position]="[0, 0.5, 0]">
+              <ngt-box-geometry />
+              <ngt-mesh-standard-material color="gray" />
+            </ngt-mesh>
+          }
 
           <ngt-grid-helper *args="[10, 10]" />
         </ng-template>

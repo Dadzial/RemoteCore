@@ -1,9 +1,9 @@
-import { Component ,ChangeDetectionStrategy} from '@angular/core';
-import { extend , NgtArgs } from 'angular-three';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { extend, NgtArgs } from 'angular-three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { loaderResource } from 'angular-three'
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfResource } from 'angular-three-soba/loaders';
+
 
 extend(THREE);
 extend({ OrbitControls });
@@ -17,6 +17,5 @@ extend({ OrbitControls });
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiagnosticsComponent {
-  public RobotModel = loaderResource(() => GLTFLoader, () => './assets/models/robot/robot.glb')
-
+  public RobotModel = gltfResource(() => '/assets/models/robot/Robot.glb');
 }
