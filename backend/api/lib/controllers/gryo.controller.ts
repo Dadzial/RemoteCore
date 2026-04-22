@@ -7,13 +7,13 @@ class GryoController implements wsControllerInterface {
     public io: Server;
 
     private gyroSchema = Joi.object({
-        roll: Joi.number().required(),
-        pitch: Joi.number().required(),
-        yaw: Joi.number().required(),
+        r: Joi.number().required(),
+        p: Joi.number().required(),
+        y: Joi.number().required(),
         ax: Joi.number().required(),
         ay: Joi.number().required(),
         az: Joi.number().required(),
-        timestamp: Joi.number().required()
+        t: Joi.number().required()
     });
 
     constructor(io: Server) {
@@ -25,7 +25,7 @@ class GryoController implements wsControllerInterface {
         this.io.on('connection', (socket: Socket) => {
             logger.info(`[Gyro] New Connection: ${socket.id}`);
 
-            socket.on('gyro:data', (payload: any) => {
+            socket.on('g', (payload: any) => {
                 let parsedData = payload;
                 if (typeof payload === 'string') {
                     try {
