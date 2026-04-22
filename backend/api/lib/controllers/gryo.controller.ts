@@ -7,14 +7,18 @@ class GryoController implements wsControllerInterface {
     public io: Server;
 
     private gyroSchema = Joi.object({
-        r: Joi.number().required(),
-        p: Joi.number().required(),
-        y: Joi.number().required(),
-        ax: Joi.number().required(),
-        ay: Joi.number().required(),
-        az: Joi.number().required(),
-        t: Joi.number().required()
-    });
+        r: Joi.number().optional(),
+        p: Joi.number().optional(),
+        y: Joi.number().optional(),
+        roll: Joi.number().optional(),
+        pitch: Joi.number().optional(),
+        yaw: Joi.number().optional(),
+        ax: Joi.number().optional(),
+        ay: Joi.number().optional(),
+        az: Joi.number().optional(),
+        t: Joi.number().optional(),
+        timestamp: Joi.number().optional()
+    }).min(1);
 
     constructor(io: Server) {
         this.io = io;
@@ -25,28 +29,27 @@ class GryoController implements wsControllerInterface {
         this.io.on('connection', (socket: Socket) => {
             logger.info(`[Gyro] New Connection: ${socket.id}`);
 
-            socket.on('g', (payload: any) => {
+
+            const handleData = (payload: any) => {
                 let parsedData = payload;
                 if (typeof payload === 'string') {
                     try {
                         parsedData = JSON.parse(payload);
                     } catch (e) {
-                        logger.error('[Gyro] Invalid JSON string received');
                         return;
                     }
                 }
 
                 const incomingData = parsedData?.data || parsedData;
-
                 const { error, value } = this.gyroSchema.validate(incomingData, { convert: true });
 
-                if (error) {
-                    logger.error(`[Gyro] Incorrect data format: ${error.message}`);
-                    return;
-                }
+                if (error) return;
 
                 this.io.emit('gyro:data', value);
-            });
+            };
+
+            socket.on('g', handleData);
+            socket.on('gyro:data', handleData);
 
             socket.on('disconnect', () => {
                 logger.info(`[Gyro] Disconnected: ${socket.id}`);
