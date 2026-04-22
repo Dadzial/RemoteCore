@@ -46,8 +46,6 @@ class GryoController implements wsControllerInterface {
                 }
 
                 this.io.emit('gyro:data', value);
-
-                logger.info(`[Gyro] Forwarded IMU data: Roll=${value.roll}, Pitch=${value.pitch}, Yaw=${value.yaw}`);
             });
 
             socket.on('disconnect', () => {
