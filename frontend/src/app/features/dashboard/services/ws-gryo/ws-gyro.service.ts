@@ -23,13 +23,13 @@ export class WsGyroService {
   getGyroData$(): Observable<GyroData> {
     return this.ws.on<any>('gyro:data').pipe(
       map((data: any) => ({
-        roll: data.r !== undefined ? data.r : data.roll,
-        pitch: data.p !== undefined ? data.p : data.pitch,
-        yaw: data.y !== undefined ? data.y : data.yaw,
-        ax: data.ax || 0,
-        ay: data.ay || 0,
-        az: data.az || 0,
-        timestamp: data.t || data.timestamp || Date.now(),
+        roll: data.roll,
+        pitch: data.pitch,
+        yaw: data.yaw,
+        ax: data.ax,
+        ay: data.ay,
+        az: data.az,
+        timestamp: data.timestamp,
       }))
     );
   }
