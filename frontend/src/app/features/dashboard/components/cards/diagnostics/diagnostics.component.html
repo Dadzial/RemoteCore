@@ -11,8 +11,8 @@
     <div class="canvas-wrapper">
       <ngt-canvas [camera]="{ position: [4, 3, 5] }">
         <ng-template canvasContent>
-          <ngt-ambient-light [intensity]="1.5" />
-          <ngt-point-light [position]="[10, 10, 10]" />
+          <ngt-ambient-light [intensity]="2" />
+          <ngt-point-light [position]="[10, 10, 10]" [intensity]="1.5" />
           <ngts-orbit-controls/>
 
           @if (RobotModel.scene(); as scene) {
