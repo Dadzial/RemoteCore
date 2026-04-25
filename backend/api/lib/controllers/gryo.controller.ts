@@ -29,35 +29,35 @@ class GryoController implements wsControllerInterface {
         this.io.on('connection', (socket: Socket) => {
             logger.info(`[Gyro] New Connection: ${socket.id}`);
 
-const handleData = (payload: any) => {
-    let incomingData = payload;
-    if (typeof payload === 'string') {
-        try {
-            incomingData = JSON.parse(payload);
-        } catch (e) {
-            return;
-        }
-    }
+            const handleData = (payload: any) => {
+                let incomingData = payload;
+                if (typeof payload === 'string') {
+                    try {
+                        incomingData = JSON.parse(payload);
+                    } catch (e) {
+                        return;
+                    }
+                }
 
 
-    const dataToValidate = incomingData?.data || incomingData;
+                const dataToValidate = incomingData?.data || incomingData;
 
-    const { error, value } = this.gyroSchema.validate(dataToValidate, { convert: true });
-    if (error) return;
+                const { error, value } = this.gyroSchema.validate(dataToValidate, { convert: true });
+                if (error) return;
 
 
-    const outputData = {
-        roll: value.r !== undefined ? value.r : (value.roll || 0),
-        pitch: value.p !== undefined ? value.p : (value.pitch || 0),
-        yaw: value.y !== undefined ? value.y : (value.yaw || 0),
-        ax: value.ax || 0,
-        ay: value.ay || 0,
-        az: value.az || 0,
-        timestamp: value.t || value.timestamp || Date.now()
-    };
+                const outputData = {
+                    roll: value.r !== undefined ? value.r : (value.roll || 0),
+                    pitch: value.p !== undefined ? value.p : (value.pitch || 0),
+                    yaw: value.y !== undefined ? value.y : (value.yaw || 0),
+                    ax: value.ax || 0,
+                    ay: value.ay || 0,
+                    az: value.az || 0,
+                    timestamp: value.t || value.timestamp || Date.now()
+                };
 
-    this.io.emit('gyro:data', outputData);
-};
+                this.io.emit('gyro:data', outputData);
+            };
 
             socket.on('g', handleData);
             socket.on('gyro:data', handleData);

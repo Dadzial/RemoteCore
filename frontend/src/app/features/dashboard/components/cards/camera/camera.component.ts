@@ -22,7 +22,7 @@ export class CameraComponent implements OnInit, OnDestroy {
 
   getColor(distance: number): string {
     if (!distance || distance === 0) return '#0c0c0c';
-    const maxDist = 2000; // 2 metry
+    const maxDist = 2000;
     const hue = Math.min(240, (distance / maxDist) * 240);
     return `hsl(${hue}, 70%, 50%)`;
   }
