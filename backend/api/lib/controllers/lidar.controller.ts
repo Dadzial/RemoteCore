@@ -7,7 +7,7 @@ class LidarController implements wsControllerInterface {
     public io: Server;
 
     private lidarSchema = Joi.object({
-        distances: Joi.array().items(Joi.number()).max(64).required(),
+        distances: Joi.array().items(Joi.number()).length(64).required(),
         timestamp: Joi.number().required()
     });
 

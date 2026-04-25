@@ -5,4 +5,36 @@
     </div>
     <h2>Camera</h2>
   </div>
+
+  <div class="content">
+    <div class="view-section">
+      <div class="lidar-grid">
+        @for (dist of distances; track $index) {
+          <div class="pixel" [style.background-color]="getColor(dist)">
+            <span class="dist-val" *ngIf="dist < 500">{{dist}}</span>
+          </div>
+        } @empty {
+          <div class="loading">Waiting for data...</div>
+        }
+      </div>
+    </div>
+
+    <div class="data-section">
+      <p class="label">Sensor Status</p>
+      <div class="status-box">
+        <div class="status-item">
+          <span>Resolution:</span>
+          <span class="value">8x8 px</span>
+        </div>
+        <div class="status-item">
+          <span>FOV:</span>
+          <span class="value">45°</span>
+        </div>
+        <div class="status-item">
+          <span>Range:</span>
+          <span class="value">4m</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
