@@ -13,7 +13,6 @@ class LidarController implements wsControllerInterface {
 
     constructor(io: Server) {
         this.io = io;
-        this.initializeWebSocketHandler();
     }
 
     public initializeWebSocketHandler(): void {
@@ -40,7 +39,7 @@ class LidarController implements wsControllerInterface {
                     return;
                 }
 
-                this.io.emit('lidar:data', value);
+                socket.broadcast.emit('lidar:data', value);
             });
 
             socket.on('disconnect', () => {

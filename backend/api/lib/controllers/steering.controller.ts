@@ -13,7 +13,6 @@ class SteeringController implements wsControllerInterface {
 
     constructor(io: Server) {
         this.io = io;
-        this.initializeWebSocketHandler();
     }
 
     public initializeWebSocketHandler(): void {
@@ -28,7 +27,7 @@ class SteeringController implements wsControllerInterface {
                     return;
                 }
 
-                this.io.emit('steering:command', {
+                socket.broadcast.emit('steering:command', {
                     event: 'steering:command',
                     data: value
                 });

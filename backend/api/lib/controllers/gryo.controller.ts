@@ -22,7 +22,6 @@ class GryoController implements wsControllerInterface {
 
     constructor(io: Server) {
         this.io = io;
-        this.initializeWebSocketHandler();
     }
 
     public initializeWebSocketHandler(): void {
@@ -56,7 +55,7 @@ class GryoController implements wsControllerInterface {
                     timestamp: value.t || value.timestamp || Date.now()
                 };
 
-                this.io.emit('gyro:data', outputData);
+                socket.broadcast.emit('gyro:data', outputData);
             };
 
             socket.on('g', handleData);

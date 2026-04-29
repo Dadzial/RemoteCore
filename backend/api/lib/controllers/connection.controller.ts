@@ -7,7 +7,6 @@ class ConnectionController implements  wsControllerInterface {
 
     constructor(io: Server) {
         this.io = io;
-        this.initializeWebSocketHandler();
     }
 
     public initializeWebSocketHandler(): void {

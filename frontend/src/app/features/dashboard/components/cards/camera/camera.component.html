@@ -8,14 +8,11 @@
 
   <div class="content">
     <div class="view-section">
-      <div class="lidar-grid">
-        @for (dist of distances; track $index) {
-          <div class="pixel" [style.background-color]="getColor(dist)">
-            <span class="dist-val" *ngIf="dist < 500">{{dist}}</span>
-          </div>
-        } @empty {
-          <div class="loading">Waiting for data...</div>
-        }
+      <div class="canvas-container">
+        <canvas #lidarCanvas></canvas>
+        <div class="loading" *ngIf="distances.length === 0">
+          Waiting for data...
+        </div>
       </div>
     </div>
 
