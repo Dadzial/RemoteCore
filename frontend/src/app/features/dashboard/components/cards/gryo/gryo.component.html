@@ -8,56 +8,48 @@
 
   <div class="content">
     @if (gyroData) {
-      <div class="panel acceleration">
-        <span class="panel-label">Acceleration (m/s²)</span>
-        <div class="metric-row">
-          <span class="label">X</span>
-          <div class="bar-container"><div class="bar" [style.width.%]="getBarWidth(gyroData.ax, 20)"></div></div>
-          <span class="value">{{ gyroData.ax | number:'1.2-2' }}</span>
+      <div class="panel">
+        <div class="stats-box">
+          <span class="panel-label">Acceleration (m/s²)</span>
+          <div class="metric-row"><span class="label">X</span><div class="bar-container"><div class="bar x" [style.width.%]="getBarWidth(gyroData.ax, 20)"></div></div><span class="value">{{ gyroData.ax | number:'1.1-1' }}</span></div>
+          <div class="metric-row"><span class="label">Y</span><div class="bar-container"><div class="bar y" [style.width.%]="getBarWidth(gyroData.ay, 20)"></div></div><span class="value">{{ gyroData.ay | number:'1.1-1' }}</span></div>
+          <div class="metric-row"><span class="label">Z</span><div class="bar-container"><div class="bar z" [style.width.%]="getBarWidth(gyroData.az, 20)"></div></div><span class="value">{{ gyroData.az | number:'1.1-1' }}</span></div>
         </div>
-        <div class="metric-row">
-          <span class="label">Y</span>
-          <div class="bar-container"><div class="bar" [style.width.%]="getBarWidth(gyroData.ay, 20)"></div></div>
-          <span class="value">{{ gyroData.ay | number:'1.2-2' }}</span>
-        </div>
-        <div class="metric-row">
-          <span class="label">Z</span>
-          <div class="bar-container"><div class="bar" [style.width.%]="getBarWidth(gyroData.az, 20)"></div></div>
-          <span class="value">{{ gyroData.az | number:'1.2-2' }}</span>
+        <div class="chart-box">
+          <canvas #accelChart></canvas>
         </div>
       </div>
 
-      <div class="visual-view">
-        <div class="horizon-disk" [style.transform]="'rotate(' + -gyroData.roll + 'deg) translateY(' + (gyroData.pitch * 0.5) + 'px)'">
-          <div class="sky"></div>
-          <div class="ground"></div>
+
+      <div class="visual-container">
+        <div class="visual-view">
+          <div class="horizon-disk" [style.transform]="'rotate(' + -gyroData.roll + 'deg) translateY(' + (gyroData.pitch * 0.8) + 'px)'">
+            <div class="sky"></div>
+            <div class="ground"></div>
+          </div>
+          <div class="overlay-plane">
+            <div class="wing left"></div><div class="center-dot"></div><div class="wing right"></div>
+          </div>
+          <div class="yaw-indicator">
+            <div class="yaw-pointer" [style.transform]="'rotate(' + gyroData.yaw + 'deg)'"></div>
+          </div>
         </div>
-        <div class="overlay-plane">
-          <div class="wing left"></div>
-          <div class="center-dot"></div>
-          <div class="wing right"></div>
-        </div>
-        <div class="yaw-indicator">
-          <div class="yaw-pointer" [style.transform]="'rotate(' + gyroData.yaw + 'deg)'"></div>
+        <div class="compass-wrap">
+          <span class="compass-val">{{ gyroData.yaw | number:'1.0-0' }}°</span>
+          <small>HEADING</small>
         </div>
       </div>
 
-      <div class="panel orientation">
-        <span class="panel-label">Position (Deg)</span>
-        <div class="metric-row">
-          <span class="label">P</span>
-          <div class="bar-container"><div class="bar alt" [style.width.%]="getBarWidth(gyroData.pitch, 90)"></div></div>
-          <span class="value">{{ gyroData.pitch | number:'1.0-0' }}°</span>
+      <!-- Right: Orientation -->
+      <div class="panel">
+        <div class="stats-box">
+          <span class="panel-label">Orientation (Deg)</span>
+          <div class="metric-row"><span class="label">P</span><div class="bar-container"><div class="bar alt p" [style.width.%]="getBarWidth(gyroData.pitch, 90)"></div></div><span class="value">{{ gyroData.pitch | number:'1.0-0' }}°</span></div>
+          <div class="metric-row"><span class="label">R</span><div class="bar-container"><div class="bar alt r" [style.width.%]="getBarWidth(gyroData.roll, 90)"></div></div><span class="value">{{ gyroData.roll | number:'1.0-0' }}°</span></div>
+          <div class="metric-row"><span class="label">Y</span><div class="bar-container"><div class="bar alt y" [style.width.%]="getBarWidth(gyroData.yaw, 180)"></div></div><span class="value">{{ gyroData.yaw | number:'1.0-0' }}°</span></div>
         </div>
-        <div class="metric-row">
-          <span class="label">R</span>
-          <div class="bar-container"><div class="bar alt" [style.width.%]="getBarWidth(gyroData.roll, 90)"></div></div>
-          <span class="value">{{ gyroData.roll | number:'1.0-0' }}°</span>
-        </div>
-        <div class="metric-row">
-          <span class="label">Y</span>
-          <div class="bar-container"><div class="bar alt" [style.width.%]="getBarWidth(gyroData.yaw, 180)"></div></div>
-          <span class="value">{{ gyroData.yaw | number:'1.0-0' }}°</span>
+        <div class="chart-box">
+          <canvas #orientChart></canvas>
         </div>
       </div>
     }
