@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {GyroData, WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
 import {Subscription} from 'rxjs';
 
@@ -61,8 +61,7 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw background grid
+
     ctx.strokeStyle = 'rgba(255,255,255,0.05)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -81,7 +80,7 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
         const x = (canvas.width / (this.MAX_HISTORY - 1)) * idx;
         const val = data[key];
         const y = (canvas.height / 2) - (val / range) * (canvas.height / 2);
-        
+
         if (idx === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       });
