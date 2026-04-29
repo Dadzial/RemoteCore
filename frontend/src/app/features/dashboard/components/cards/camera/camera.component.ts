@@ -11,6 +11,11 @@ import { Subscription } from 'rxjs';
 export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('lidarCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   public distances: number[] = [];
+  public stats = {
+    avg: 0,
+    min: 0,
+    status: 'Clear'
+  };
   private sub?: Subscription;
   private ctx: CanvasRenderingContext2D | null = null;
   private readonly RESOLUTION = 64;
@@ -20,10 +25,28 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.sub = this.ws.getLidarData$().subscribe((data: CameraData) => {
       this.distances = data.distances;
+      this.calculateStats();
       this.renderLidar();
     });
   }
 
+  private calculateStats() {
+    if (!this.distances.length) return;
+
+    const validDistances = this.distances.filter(d => d > 0);
+    if (!validDistances.length) return;
+
+    this.stats.min = Math.min(...validDistances);
+    this.stats.avg = Math.round(validDistances.reduce((a, b) => a + b, 0) / validDistances.length);
+
+    if (this.stats.min < 300) {
+      this.stats.status = 'CRITICAL';
+    } else if (this.stats.min < 800) {
+      this.stats.status = 'WARNING';
+    } else {
+      this.stats.status = '';
+    }
+    }
   ngAfterViewInit() {
     this.initCanvas();
   }

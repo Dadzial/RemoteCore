@@ -7,29 +7,35 @@
   </div>
 
   <div class="content">
-    <div class="view-section">
-      <div class="canvas-container">
-        <canvas #lidarCanvas></canvas>
-        <div class="loading" *ngIf="distances.length === 0">
-          Waiting for data...
+    <div class="left-panel">
+      <div class="view-section">
+        <div class="canvas-container">
+          <canvas #lidarCanvas></canvas>
+          <div class="overlay-grid" *ngIf="distances.length > 0"></div>
+          @if (distances.length === 0) {
+            <div class="loading">Waiting for data...</div>
+          }
         </div>
       </div>
     </div>
 
-    <div class="data-section">
-      <p class="label">Sensor Status</p>
-      <div class="status-box">
-        <div class="status-item">
-          <span>Resolution:</span>
-          <span class="value">8x8 px</span>
+    <div class="right-panel">
+      <div class="metrics-grid">
+        <div class="mini-card">
+          <span class="m-label">Closest</span>
+          <span class="m-value">{{stats.min}}<small>mm</small></span>
         </div>
-        <div class="status-item">
-          <span>FOV:</span>
-          <span class="value">45°</span>
+        <div class="mini-card">
+          <span class="m-label">Average</span>
+          <span class="m-value">{{stats.avg}}<small>mm</small></span>
         </div>
-        <div class="status-item">
-          <span>Range:</span>
-          <span class="value">4m</span>
+        <div class="mini-card">
+          <span class="m-label">Zones</span>
+          <span class="m-value">8x8</span>
+        </div>
+        <div class="mini-card">
+          <span class="m-label">FOV</span>
+          <span class="m-value">45<small>°</small></span>
         </div>
       </div>
     </div>
