@@ -23,4 +23,10 @@ export class GryoComponent implements OnInit , OnDestroy {
   ngOnDestroy() {
     this.sub?.unsubscribe()
   }
+
+  getBarWidth(value: number, max: number): number {
+    const absVal = Math.abs(value);
+    const percentage = (absVal / max) * 100;
+    return Math.min(percentage, 100);
+  }
 }
