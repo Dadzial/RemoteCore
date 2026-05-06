@@ -1,5 +1,6 @@
 import { NgModule ,CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
+import { NgxGaugeModule } from 'ngx-gauge';
 import { DashboardRoutingModule } from './dashboard-routing-module';
 import {SharedModule} from '../../shared/shared-module';
 import {HomeComponent} from './components/home/home.component';
@@ -15,7 +16,7 @@ import { NgtsOrbitControls } from 'angular-three-soba/controls';
 
 @NgModule({
   declarations: [HomeComponent,SteeringComponent,GryoComponent,SpeedComponent,DiagnosticsComponent,CameraComponent],
-  imports: [CommonModule, DashboardRoutingModule, SharedModule, ...NgtCanvas, NgtCanvasImpl, NgtCanvasContent, NgtArgs, NgtsOrbitControls, NgOptimizedImage],
+  imports: [CommonModule, DashboardRoutingModule, SharedModule, ...NgtCanvas, NgtCanvasImpl, NgtCanvasContent, NgtArgs, NgtsOrbitControls, NgOptimizedImage,NgxGaugeModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class DashboardModule {}

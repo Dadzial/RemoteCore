@@ -5,6 +5,68 @@
     </div>
     <h2>Speed</h2>
   </div>
+
+  <div class="clocks">
+    <div class="side-gauge left">
+      <ngx-gauge
+        [type]="leftGaugeType"
+        [value]="batteryValue"
+        [cap]="gaugeCap"
+        [size]="125"
+        [thick]="8"
+        [backgroundColor]="gaugeTrackColor"
+        [thresholds]="batteryThresholds">
+        <ngx-gauge-label>Battery</ngx-gauge-label>
+        <ngx-gauge-append>%</ngx-gauge-append>
+      </ngx-gauge>
+    </div>
+
+    <div class="main-gauge-wrapper">
+      <ngx-gauge
+        [type]="centerGaugeType"
+        [value]="speedValue"
+        [cap]="gaugeCap"
+        [size]="190"
+        [thick]="12"
+        [max]="3"
+        [backgroundColor]="gaugeTrackColor"
+        [thresholds]="speedThresholds">
+        <ngx-gauge-label>Velocity</ngx-gauge-label>
+        <ngx-gauge-append>m/s</ngx-gauge-append>
+      </ngx-gauge>
+    </div>
+
+    <div class="side-gauge right">
+      <ngx-gauge
+        [type]="rightGaugeType"
+        [value]="loadValue"
+        [cap]="gaugeCap"
+        [size]="125"
+        [thick]="8"
+        [max]="12"
+        [backgroundColor]="gaugeTrackColor"
+        [thresholds]="loadThresholds">
+        <ngx-gauge-label>Load</ngx-gauge-label>
+        <ngx-gauge-append>A</ngx-gauge-append>
+      </ngx-gauge>
+    </div>
+  </div>
+
+  <div class="status-row">
+    <div class="status-card">
+      <span class="label">Voltage</span>
+      <span class="value">{{ voltage }}V</span>
+    </div>
+    <div class="status-card">
+      <span class="label">Temp</span>
+      <span class="value">{{ temp }}°C</span>
+    </div>
+    <div class="status-card">
+      <span class="label">Runtime</span>
+      <span class="value">{{ runtime }}</span>
+    </div>
+  </div>
 </div>
+
 
 

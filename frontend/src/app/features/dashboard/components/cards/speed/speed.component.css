@@ -31,3 +31,88 @@
   font-size: 1.2rem;
   text-shadow: 0 2px 6px rgba(0,0,0,0.35);
 }
+
+.clocks {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  flex-grow: 1;
+  padding: 0 0.5rem;
+  margin-top: -10px;
+  font-family: Inter, sans-serif;
+}
+
+.main-gauge-wrapper {
+  transform: translateY(-60px);
+  filter: drop-shadow(0 12px 20px rgba(0,0,0,0.6));
+  z-index: 2;
+}
+
+.side-gauge {
+  opacity: 0.8;
+  transform: translateY(-20px);
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.status-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.7rem 0.4rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+}
+
+.status-card .label {
+  font-family: Inter, sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-text);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.status-card .value {
+  font-family: Inter, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+::ng-deep ngx-gauge-label {
+  color: var(--color-text) !important;
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin-top: 8px !important;
+}
+
+::ng-deep ngx-gauge-value {
+  color: var(--color-text) !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+}
+
+::ng-deep ngx-gauge-append {
+  color: var(--color-text) !important;
+  font-size: 12px !important;
+  opacity: 1;
+}
+
+::ng-deep .ngx-gauge-reading {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  line-height: 1.2 !important;
+}
