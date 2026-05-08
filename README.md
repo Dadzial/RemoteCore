@@ -125,5 +125,23 @@ void sendImuData() {
 }
 ```
 
+### lidar.controller.ts
+
+```ts
+void sendLidarData() {
+    if (!lidar.isDataReady() || !lidar.getRangingData(&data)) return;
+    JsonDocument doc;
+    JsonArray array = doc.to<JsonArray>();
+    array.add("lidar:data");
+    JsonObject d = array.add<JsonObject>();
+    JsonArray arr = d["distances"].to<JsonArray>();
+    for (int i = 0; i < 64; i++) { arr.add(data.distance_mm[i]); }
+    d["timestamp"] = millis();
+    String output;
+    serializeJson(doc, output);
+    socketIO.sendEVENT(output);
+}
+```
+
 
 
