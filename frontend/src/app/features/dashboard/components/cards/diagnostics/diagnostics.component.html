@@ -9,23 +9,43 @@
   <div class="view-section">
     <p class="wrapper-label">View</p>
     <div class="canvas-wrapper">
-      <ngt-canvas [camera]="{ position: [4, 3, 5] }">
+      <ngt-canvas
+        [camera]="{ position: [5.79, 5.1, 9.14] }"
+        [gl]="{ alpha: true, antialias: true }"
+        (created)="onCanvasCreated($event)"
+      >
         <ng-template canvasContent>
-          <ngt-ambient-light [intensity]="2" />
-          <ngt-point-light [position]="[10, 10, 10]" [intensity]="1.5" />
+          <ngt-ambient-light [intensity]="0.8" />
+          <ngt-point-light [position]="[5, 5, 5]" [intensity]="1.5" />
+          <ngt-point-light [position]="[-5, 3, -5]" [intensity]="1" />
+          <ngt-directional-light [position]="[0, 10, 0]" [intensity]="0.5" />
+          <ngt-hemisphere-light *args="['#ffffff', '#444444', 1]" />
           <ngts-orbit-controls/>
 
-          @if (RobotModel.scene(); as scene) {
+          @if (truckModel.scene(); as scene) {
             <ngt-primitive *args="[scene]" />
-
-          } @else if (RobotModel.isLoading()) {
-            <ngt-mesh [position]="[0, 0.5, 0]">
-              <ngt-box-geometry />
-              <ngt-mesh-standard-material />
-            </ngt-mesh>
           }
 
-          <ngt-grid-helper *args="[10, 10]" />
+          @if (boardModel.scene(); as scene) {
+            <ngt-primitive *args="[scene]" />
+          }
+
+          @if (esp32Model.scene(); as scene) {
+            <ngt-primitive *args="[scene]" />
+          }
+
+          @if (lidarModel.scene(); as scene) {
+            <ngt-primitive *args="[scene]" />
+          }
+
+          @if(motorModel.scene(); as scene){
+            <ngt-primitive *args="[scene]" />
+          }
+
+          @if (imuModel.scene(); as scene) {
+            <ngt-primitive *args="[scene]" />
+          }
+
         </ng-template>
       </ngt-canvas>
     </div>
