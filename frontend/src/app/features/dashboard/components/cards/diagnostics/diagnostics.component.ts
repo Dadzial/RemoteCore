@@ -64,13 +64,6 @@ export class DiagnosticsComponent implements OnInit {
     this.webSocketService.on('connection:robot-online').subscribe((data: any) => {
       this.addLog(`Robot Online - Firmware: ${data.v || 'unknown'}`, 'success');
     });
-
-    this.webSocketService.on('steering:command').subscribe((data: any) => {
-      if (data.data) {
-        const { leftMotor, rightMotor } = data.data;
-        this.addLog(`Motors -> L: ${leftMotor}% R: ${rightMotor}%`, 'info');
-      }
-    });
   }
 
   private addLog(message: string, type: LogEntry['type']) {
