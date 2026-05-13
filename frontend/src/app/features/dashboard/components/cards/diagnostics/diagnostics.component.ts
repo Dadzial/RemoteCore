@@ -1,11 +1,23 @@
-import { Component, ChangeDetectionStrategy, effect } from '@angular/core';
+import {Component, ChangeDetectionStrategy, effect, signal, OnInit} from '@angular/core';
 import { extend, NgtState } from 'angular-three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { gltfResource } from 'angular-three-soba/loaders';
+import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
+import {WebSocketService} from '../../../services/web-socket/web-socket.service';
+import {WsCameraService} from '../../../services/ws-camera/ws-camera.service';
+import {WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
+
+import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic';
 
 extend(THREE);
 extend({ OrbitControls });
+
+interface LogEntry {
+  timestamp: string;
+  message: string;
+  type : 'info' | 'success' | 'warning' | 'error';
+}
 
 @Component({
   selector: 'app-diagnostics',
@@ -14,7 +26,10 @@ extend({ OrbitControls });
   styleUrl: './diagnostics.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiagnosticsComponent {
+export class DiagnosticsComponent implements OnInit {
+
+  public info = signal<LogEntry[]>([]);
+
   public truckModel = gltfResource(() => '/assets/models/robot/robot_truck.glb');
   public boardModel = gltfResource(() => '/assets/models/robot/robot_board.glb');
   public esp32Model = gltfResource(() => '/assets/models/robot/robot_esp32.glb');
@@ -24,7 +39,10 @@ export class DiagnosticsComponent {
 
   private originalColors = new Map<string, string>();
 
-  constructor() {
+  constructor(
+    private wsDiagnostic: WsDiagnosticService,
+    private webSocketService: WebSocketService
+  ) {
     effect(() => {
       this.initModel(this.truckModel.scene());
       this.initModel(this.boardModel.scene());
@@ -33,6 +51,27 @@ export class DiagnosticsComponent {
       this.initModel(this.imuModel.scene());
       this.initModel(this.motorModel.scene());
     });
+  }
+
+  ngOnInit() {
+    this.addLog('System Diagnostic Initialized', 'info');
+
+    this.wsDiagnostic.onLog().subscribe(log => {
+      this.addLog(log.msg, log.type);
+    });
+
+    this.webSocketService.on('connection:robot-online').subscribe((data: any) => {
+      this.addLog(`Robot Online - Firmware: ${data.v || 'unknown'}`, 'success');
+    });
+
+    this.webSocketService.on('steering:command').subscribe((data: any) => {
+       this.addLog(`Steering Command - Speed: ${data.speed}, Angle: ${data.angle}`, 'info');
+    });
+  }
+
+  private addLog(message: string, type: LogEntry['type']) {
+    const timestamp = new Date().toLocaleTimeString();
+    this.info.update(logs => [{timestamp, message, type}, ...logs].slice(0, 50));
   }
 
   private initModel(scene: THREE.Group | THREE.Object3D | undefined | null) {
