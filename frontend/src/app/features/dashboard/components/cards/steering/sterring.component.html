@@ -6,7 +6,7 @@
     <h2>Control</h2>
   </div>
 
-  <div class="joystick-section">
+  <div class="joystick-section" *ngIf="activeMode() === ModeCommands.Joystick">
     <p class="wrapper-label">Joystick Control</p>
     <div class="telemetry">
       <span>X: {{joyStickPos().x.toPrecision(2)}}%</span>
@@ -24,28 +24,58 @@
     </div>
   </div>
 
-  <div class="speed-section">
-    <p class="wrapper-label">Speed Mode</p>
-    <div class="control-speed-wrapper">
-      <button
-        class="control-button"
-        [class.active]="speedMultiplier() === 0.25"
-        (click)="onCommandClick(SteeringCommands.Slow)">
-        {{ SteeringCommands.Slow | titlecase }}
-      </button>
+  <div class="keyboard-section" *ngIf="activeMode() === ModeCommands.Keyboard">
+    <p class="wrapper-label">Keyboard Control</p>
+    <div class="wasd-container">
+      <div class="wasd-row">
+        <button class="wasd-btn"
+                [class.pressed]="pressedKeys.has('w')"
+                (mousedown)="onVisualKeyStart('w')"
+                (mouseup)="onVisualKeyEnd('w')"
+                (mouseleave)="onVisualKeyEnd('w')"
+                (touchstart)="onVisualKeyStart('w')"
+                (touchend)="onVisualKeyEnd('w')">W</button>
+      </div>
+      <div class="wasd-row">
+        <button class="wasd-btn"
+                [class.pressed]="pressedKeys.has('a')"
+                (mousedown)="onVisualKeyStart('a')"
+                (mouseup)="onVisualKeyEnd('a')"
+                (mouseleave)="onVisualKeyEnd('a')"
+                (touchstart)="onVisualKeyStart('a')"
+                (touchend)="onVisualKeyEnd('a')">A</button>
+        <button class="wasd-btn"
+                [class.pressed]="pressedKeys.has('s')"
+                (mousedown)="onVisualKeyStart('s')"
+                (mouseup)="onVisualKeyEnd('s')"
+                (mouseleave)="onVisualKeyEnd('s')"
+                (touchstart)="onVisualKeyStart('s')"
+                (touchend)="onVisualKeyEnd('s')">S</button>
+        <button class="wasd-btn"
+                [class.pressed]="pressedKeys.has('d')"
+                (mousedown)="onVisualKeyStart('d')"
+                (mouseup)="onVisualKeyEnd('d')"
+                (mouseleave)="onVisualKeyEnd('d')"
+                (touchstart)="onVisualKeyStart('d')"
+                (touchend)="onVisualKeyEnd('d')">D</button>
+      </div>
+    </div>
+  </div>
 
+  <div class="control-section">
+    <p class="wrapper-label">Steering Mode</p>
+    <div class="control-mode-wrapper">
       <button
         class="control-button"
-        [class.active]="speedMultiplier() === 0.5"
-        (click)="onCommandClick(SteeringCommands.Medium)">
-        {{ SteeringCommands.Medium | titlecase }}
+        [class.active]="activeMode() === ModeCommands.Joystick"
+        (click)="onCommandClick(ModeCommands.Joystick)">
+        {{ ModeCommands.Joystick }}
       </button>
-
       <button
         class="control-button"
-        [class.active]="speedMultiplier() === 1"
-        (click)="onCommandClick(SteeringCommands.Fast)">
-        {{ SteeringCommands.Fast | titlecase }}
+        [class.active]="activeMode() === ModeCommands.Keyboard"
+        (click)="onCommandClick(ModeCommands.Keyboard)">
+        {{ ModeCommands.Keyboard }}
       </button>
     </div>
   </div>

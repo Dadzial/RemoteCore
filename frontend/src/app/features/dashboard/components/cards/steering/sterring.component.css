@@ -63,6 +63,64 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
+}
+
+/* Keyboard Mode / WASD */
+.keyboard-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+  margin-bottom: 2rem;
+}
+
+.wasd-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.wasd-row {
+  display: flex;
+  gap: 10px;
+}
+
+.wasd-btn {
+  width: 68px;
+  height: 68px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+  user-select: none;
+  opacity: 0.9;
+}
+
+.wasd-btn.pressed {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+  opacity: 1;
+}
+
+.wasd-btn:hover:not(.pressed) {
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 1;
 }
 
 .base {
@@ -97,58 +155,70 @@
 
 /*Speed Control*/
 
-.speed-section {
+.control-section {
   width: 100%;
 }
 
 .wrapper-label {
   font-family: Inter, sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text);
   opacity: 0.8;
-  text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 0.2rem;
   margin-left: 0.2rem;
   text-align: center;
 }
 
-.control-speed-wrapper {
-  background-color: var(--color-background);
+.control-mode-wrapper {
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: stretch;
   width: 100%;
-  height: 5vh;
-  border-radius: 15px;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-  padding: 0.3rem;
-  gap: 0.45rem;
+  height: 48px;
+  border-radius: 14px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 5px;
+  gap: 6px;
   box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .control-button {
   flex: 1;
-  background-color: var(--color-primary);
+  background-color: transparent;
   height: 100%;
   border: none;
   border-radius: 10px;
   color: var(--color-text);
-  font-family: Inter, sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .control-button.active {
-  background-color: #4a9eff;
-  font-weight: 600;
-  box-shadow: 0 0 10px rgba(74, 158, 255, 0.4);
+  background-color: #3b82f6;
+  color: #ffffff;
+  opacity: 1;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4);
+}
+
+.control-button:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.08);
+  opacity: 0.9;
+}
+
+.control-button:active {
+  transform: scale(0.97);
 }
 
 
