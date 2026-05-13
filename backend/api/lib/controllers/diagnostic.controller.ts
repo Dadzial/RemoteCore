@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 import logger from "../utils/logger";
 import joi from "joi";
 
-class ConnectionController  implements wsControllerInterface {
+class DiagnosticController  implements wsControllerInterface {
     public io: Server;
 
     constructor(io: Server) {
@@ -14,4 +14,4 @@ class ConnectionController  implements wsControllerInterface {
 
     }
 }
-export default ConnectionController;
+export default DiagnosticController;
