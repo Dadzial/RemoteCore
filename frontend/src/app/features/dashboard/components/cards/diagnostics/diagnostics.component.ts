@@ -3,11 +3,7 @@ import { extend, NgtState } from 'angular-three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { gltfResource } from 'angular-three-soba/loaders';
-import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
 import {WebSocketService} from '../../../services/web-socket/web-socket.service';
-import {WsCameraService} from '../../../services/ws-camera/ws-camera.service';
-import {WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
-
 import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic';
 
 extend(THREE);
