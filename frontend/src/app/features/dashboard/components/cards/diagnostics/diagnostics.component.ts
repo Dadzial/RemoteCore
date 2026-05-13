@@ -60,12 +60,20 @@ export class DiagnosticsComponent implements OnInit {
       this.addLog(log.msg, log.type);
     });
 
+    // Nasłuchiwanie na status sprzętowy (Heap, RSSI)
+    this.wsDiagnostic.onStatus().subscribe(status => {
+      this.addLog(`Status: RSSI: ${status.rssi}dBm, Free Heap: ${Math.round(status.heap/1024)}KB`, 'info');
+    });
+
     this.webSocketService.on('connection:robot-online').subscribe((data: any) => {
       this.addLog(`Robot Online - Firmware: ${data.v || 'unknown'}`, 'success');
     });
 
     this.webSocketService.on('steering:command').subscribe((data: any) => {
-       this.addLog(`Steering Command - Speed: ${data.speed}, Angle: ${data.angle}`, 'info');
+      if (data.data) {
+        const { leftMotor, rightMotor } = data.data;
+        this.addLog(`Motors -> L: ${leftMotor}% R: ${rightMotor}%`, 'info');
+      }
     });
   }
 
