@@ -10,23 +10,40 @@ export class WebSocketService {
 
   public connect(url: string): void {
     if (!this.socket) {
-      this.socket = io(url);
+      console.log('[WS] Connecting to:', url);
+      this.socket = io(url, {
+        transports: ['websocket'],
+        reconnection: true
+      });
+
+      this.socket.on('connect', () => console.log('[WS] Connected:', this.socket?.id));
+      this.socket.on('connect_error', (err) => console.error('[WS] Connection error:', err));
+      this.socket.on('disconnect', (reason) => console.warn('[WS] Disconnected:', reason));
     }
   }
 
   public on<T>(event: string): Observable<T> {
     return new Observable((observer) => {
-      if (!this.socket) {
-        console.error(`[WS] Socket not connected! Call connect() before on('${event}')`);
-        return;
-      }
-      this.socket.on(event, (data: T) => observer.next(data));
+      const checkAndSubscribe = () => {
+        if (this.socket) {
+          this.socket.on(event, (data: T) => observer.next(data));
+        } else {
+          // Jeśli gniazdo jeszcze nie istnieje, spróbuj ponownie za chwilę
+          setTimeout(checkAndSubscribe, 100);
+        }
+      };
+
+      checkAndSubscribe();
       return () => this.socket?.off(event);
     });
   }
 
   public emit(event: string, data?: any): void {
-    this.socket?.emit(event, data);
+    if (this.socket) {
+      this.socket.emit(event, data);
+    } else {
+      console.warn(`[WS] Cannot emit '${event}', socket not connected`);
+    }
   }
 
   public close(): void {

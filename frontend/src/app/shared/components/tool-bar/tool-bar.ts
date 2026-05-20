@@ -24,11 +24,13 @@ export class ToolBar implements OnInit {
     this.displayName = this.authService.getDisplayName();
 
     this.sub = this.ws.on('robot-status-confirmed').subscribe((data) => {
-      console.log('Serwer :', data);
-      this.isRobotConnected = true;
+      console.log('[ToolBar] Serwer potwierdził status robota:', data);
+      setTimeout(() => {
+        this.isRobotConnected = true;
+      });
     });
 
-    this.ws.emit('connection:robot-online', { firmwareVersion: '1.0.2' });
+    this.ws.emit('connection:robot-online', { firmwareVersion: '1.3.0' });
   }
 
   public onLogoutClick(): void {

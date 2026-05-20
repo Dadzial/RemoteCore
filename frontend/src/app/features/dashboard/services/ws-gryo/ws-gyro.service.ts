@@ -21,15 +21,15 @@ export class WsGyroService {
   constructor(private ws: WebSocketService) {}
 
   getGyroData$(): Observable<GyroData> {
-    return this.ws.on<any>('gyro:data').pipe(
+    return this.ws.on<any>('g').pipe(
       map((data: any) => ({
-        roll: data.roll,
-        pitch: data.pitch,
-        yaw: data.yaw,
+        roll: data.r,
+        pitch: data.p,
+        yaw: data.y,
         ax: data.ax,
         ay: data.ay,
         az: data.az,
-        timestamp: data.timestamp,
+        timestamp: data.t,
       }))
     );
   }

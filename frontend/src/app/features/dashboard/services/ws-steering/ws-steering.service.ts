@@ -1,14 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import {WebSocketService} from '../web-socket/web-socket.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WsSteeringService {
+  public currentSpeed = signal(0);
 
   constructor(private ws: WebSocketService) {}
 
   public sendSteeringCommand(left: number, right: number): void {
+    // Obliczamy prędkość na podstawie uśrednionej mocy silników
+    // (Math.abs(left) + Math.abs(right)) / 2 / 100 * 3.0 m/s
+    const speed = ((Math.abs(left) + Math.abs(right)) / 200) * 3.0;
+    this.currentSpeed.set(speed);
+
     const payload = {
       data: {
         leftMotor: Math.round(left),
@@ -19,6 +25,7 @@ export class WsSteeringService {
   }
 
   public sendStop(): void {
+    this.currentSpeed.set(0);
     this.ws.emit('steering:stop');
   }
 }

@@ -9,14 +9,15 @@
   <div class="clocks">
     <div class="side-gauge left">
       <ngx-gauge
-        [type]="leftGaugeType"
-        [value]="batteryValue"
+        [type]="'semi'"
+        [value]="linkQuality()"
         [cap]="gaugeCap"
         [size]="125"
         [thick]="8"
+        [max]="100"
         [backgroundColor]="gaugeTrackColor"
-        [thresholds]="batteryThresholds">
-        <ngx-gauge-label>Battery</ngx-gauge-label>
+        [thresholds]="signalThresholds">
+        <ngx-gauge-label>Link Quality</ngx-gauge-label>
         <ngx-gauge-append>%</ngx-gauge-append>
       </ngx-gauge>
     </div>
@@ -24,7 +25,7 @@
     <div class="main-gauge-wrapper">
       <ngx-gauge
         [type]="centerGaugeType"
-        [value]="speedValue"
+        [value]="speedValue()"
         [cap]="gaugeCap"
         [size]="190"
         [thick]="12"
@@ -38,32 +39,32 @@
 
     <div class="side-gauge right">
       <ngx-gauge
-        [type]="rightGaugeType"
-        [value]="loadValue"
+        [type]="'semi'"
+        [value]="vibration()"
         [cap]="gaugeCap"
         [size]="125"
         [thick]="8"
-        [max]="12"
+        [max]="4"
         [backgroundColor]="gaugeTrackColor"
-        [thresholds]="loadThresholds">
-        <ngx-gauge-label>Load</ngx-gauge-label>
-        <ngx-gauge-append>A</ngx-gauge-append>
+        [thresholds]="vibThresholds">
+        <ngx-gauge-label>Vibration</ngx-gauge-label>
+        <ngx-gauge-append>G</ngx-gauge-append>
       </ngx-gauge>
     </div>
   </div>
 
   <div class="status-row">
     <div class="status-card">
-      <span class="label">Voltage</span>
-      <span class="value">{{ voltage }}V</span>
+      <span class="label">IMU Rate</span>
+      <span class="value">{{ imuHz() }} Hz</span>
     </div>
     <div class="status-card">
-      <span class="label">Temp</span>
-      <span class="value">{{ temp }}°C</span>
+      <span class="label">Lidar Rate</span>
+      <span class="value">{{ lidarHz() }} Hz</span>
     </div>
     <div class="status-card">
-      <span class="label">Runtime</span>
-      <span class="value">{{ runtime }}</span>
+      <span class="label">Uptime</span>
+      <span class="value">{{ runtimeValue() }}</span>
     </div>
   </div>
 </div>
