@@ -21,19 +21,17 @@ export class SpeedComponent {
   private cameraWs = inject(WsCameraService);
 
   private status = toSignal(this.diagnosticWs.onStatus());
-  
-  // Częstotliwości odświeżania (Hz)
+
   public imuHz = signal(0);
   public lidarHz = signal(0);
   private lastImuT = 0;
   private lastLidarT = 0;
 
-  // Wibracje (G-Stress)
+
   public vibration = signal(0);
   private lastAccel = { ax: 0, ay: 0, az: 0 };
 
   constructor() {
-    // Monitorowanie częstotliwości IMU i obliczanie wibracji
     this.gyroWs.getGyroData$().subscribe(data => {
       if (!data) return;
       const now = Date.now();
@@ -43,18 +41,15 @@ export class SpeedComponent {
       }
       this.lastImuT = now;
 
-      // Wibracje: suma różnic przyspieszeń (delta-G)
       const dv = Math.sqrt(
         Math.pow(data.ax - this.lastAccel.ax, 2) +
         Math.pow(data.ay - this.lastAccel.ay, 2) +
         Math.pow(data.az - this.lastAccel.az, 2)
       );
-      // Filtrujemy szum i mapujemy na G (uproszczone)
       this.vibration.set(Math.min(4, dv / 9.8));
       this.lastAccel = { ax: data.ax, ay: data.ay, az: data.az };
     });
 
-    // Monitorowanie częstotliwości Lidaru
     this.cameraWs.getLidarData$().subscribe(() => {
       const now = Date.now();
       if (this.lastLidarT) {
@@ -67,7 +62,6 @@ export class SpeedComponent {
 
   speedValue = computed(() => this.steeringWs.currentSpeed());
 
-  // Jakość połączenia: RSSI -100 do -30 dBm na 0-100%
   linkQuality = computed(() => {
     const rssi = this.status()?.rssi ?? -100;
     return Math.max(0, Math.min(100, 2 * (rssi + 100)));

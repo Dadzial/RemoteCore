@@ -30,7 +30,7 @@ export class ToolBar implements OnInit {
       });
     });
 
-    this.ws.emit('connection:robot-online', { firmwareVersion: '1.3.0' });
+    this.ws.emit('connection:robot-online', { firmwareVersion: '1.0.2' });
   }
 
   public onLogoutClick(): void {

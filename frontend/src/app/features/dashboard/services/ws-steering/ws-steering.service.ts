@@ -10,8 +10,6 @@ export class WsSteeringService {
   constructor(private ws: WebSocketService) {}
 
   public sendSteeringCommand(left: number, right: number): void {
-    // Obliczamy prędkość na podstawie uśrednionej mocy silników
-    // (Math.abs(left) + Math.abs(right)) / 2 / 100 * 3.0 m/s
     const speed = ((Math.abs(left) + Math.abs(right)) / 200) * 3.0;
     this.currentSpeed.set(speed);
 
