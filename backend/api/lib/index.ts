@@ -38,8 +38,12 @@ const frontendPath = path.join(__dirname, '../../../frontend/dist/frontend/brows
 app.app.use(express.static(frontendPath));
 
 
-app.app.get('/:any*', (req, res) => {
-    res.sendFile(path.join(frontendPath, 'index.html'));
+app.app.use((req, res, next) => {
+    if (req.method === 'GET') {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+    } else {
+        next();
+    }
 });
 
 app.listen()
