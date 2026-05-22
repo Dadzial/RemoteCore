@@ -7,6 +7,12 @@ export interface SystemStatus {
   uptime: number;
 }
 
+export interface LogEntry {
+  timestamp: string;
+  message: string;
+  level: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,5 +21,9 @@ export class WsDiagnosticService {
 
   public onStatus(): Observable<SystemStatus> {
     return this.ws.on<SystemStatus>('diagnostic:status');
+  }
+
+  public onLog(): Observable<LogEntry> {
+    return this.ws.on<LogEntry>('diagnostic:log');
   }
 }

@@ -6,58 +6,58 @@
     <h2>Diagnostics</h2>
   </div>
 
-  <div class="view-section">
-    <p class="wrapper-label">View</p>
-    <div class="canvas-wrapper">
-      <ngt-canvas
-        [camera]="{ position: [5.79, 5.1, 9.14] }"
-        [gl]="{ alpha: true, antialias: true }"
-        (created)="onCanvasCreated($event)"
-      >
-        <ng-template canvasContent>
-          <ngt-ambient-light [intensity]="0.8" />
-          <ngt-point-light [position]="[5, 5, 5]" [intensity]="1.5" />
-          <ngt-point-light [position]="[-5, 3, -5]" [intensity]="1" />
-          <ngt-directional-light [position]="[0, 10, 0]" [intensity]="0.5" />
-          <ngt-hemisphere-light *args="['#ffffff', '#444444', 1]" />
-          <ngts-orbit-controls/>
+  <ngt-canvas
+    [camera]="{ position: [5.79, 5.1, 9.14] }"
+    [gl]="{ alpha: true, antialias: true }"
+    (created)="onCanvasCreated($event)"
+  >
+    <ng-template canvasContent>
+      <ngt-ambient-light [intensity]="0.8" />
+      <ngt-point-light [position]="[5, 5, 5]" [intensity]="1.5" />
+      <ngt-point-light [position]="[-5, 3, -5]" [intensity]="1" />
+      <ngt-directional-light [position]="[0, 10, 0]" [intensity]="0.5" />
+      <ngt-hemisphere-light *args="['#ffffff', '#444444', 1]" />
+      <ngts-orbit-controls/>
 
-          @if (truckModel.scene(); as scene) {
-            <ngt-primitive *args="[scene]" />
-          }
+      <ngt-group [rotation]="robotRotation()">
+        @if (truckModel.scene(); as scene) {
+          <ngt-primitive *args="[scene]" />
+        }
 
-          @if (boardModel.scene(); as scene) {
-            <ngt-primitive *args="[scene]" />
-          }
+        @if (boardModel.scene(); as scene) {
+          <ngt-primitive *args="[scene]" />
+        }
 
-          @if (esp32Model.scene(); as scene) {
-            <ngt-primitive *args="[scene]" />
-          }
+        @if (esp32Model.scene(); as scene) {
+          <ngt-primitive *args="[scene]" />
+        }
 
-          @if (lidarModel.scene(); as scene) {
-            <ngt-primitive *args="[scene]" />
-          }
+        @if (lidarModel.scene(); as scene) {
+          <ngt-primitive *args="[scene]" />
+        }
 
-          @if(motorModel.scene(); as scene){
-            <ngt-primitive *args="[scene]" />
-          }
+        @if(motorModel.scene(); as scene){
+          <ngt-primitive *args="[scene]" />
+        }
 
-          @if (imuModel.scene(); as scene) {
-            <ngt-primitive *args="[scene]" />
-          }
+        @if (imuModel.scene(); as scene) {
+          <ngt-primitive *args="[scene]" />
+        }
+      </ngt-group>
 
-        </ng-template>
-      </ngt-canvas>
-    </div>
-  </div>
+    </ng-template>
+  </ngt-canvas>
 
   <div class="logs-section">
     <p class="wrapper-label">Logs</p>
     <div class="log-console">
-      <div class="log-entry"><span class="timestamp">[21:44:01]</span> System initialized</div>
-      <div class="log-entry"><span class="timestamp">[21:44:05]</span> Robot connected</div>
-      <div class="log-entry success"><span class="timestamp">[21:44:06]</span> WebSocket Handshake OK</div>
-      <div class="log-entry warning"><span class="timestamp">[21:44:10]</span> Battery at 85%</div>
+      @for (log of logs(); track $index) {
+        <div class="log-entry" [class]="log.level">
+          <span class="timestamp">[{{ log.timestamp }}]</span> {{ log.message }}
+        </div>
+      } @empty {
+        <div class="log-entry"><span class="timestamp"></span> Waiting for logs...</div>
+      }
     </div>
   </div>
 </div>
