@@ -59,7 +59,6 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
 
     this.sub.add(
       this.wsDiagnostic.onLog().subscribe((log: LogEntry) => {
-        // Dodaj nowy log i ogranicz do 50 elementów
         this.logs.update(logs => [...logs, log].slice(-50));
       })
     );
