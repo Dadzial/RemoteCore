@@ -4,6 +4,7 @@ import SteeringController from "./controllers/steering.controller";
 import ConnectionController from "./controllers/connection.controller";
 import GryoController from "./controllers/gryo.controller";
 import LidarController from "./controllers/lidar.controller";
+import DiagnosticController from "./controllers/diagnostic.controller";
 
 const app = new App();
 const io = app.getIo();
@@ -18,7 +19,8 @@ const wsControllers = [
     new LidarController(io),
     new GryoController(io),
     new SteeringController(io),
-    new ConnectionController(io)
+    new ConnectionController(io),
+    new DiagnosticController(io)
 ]
 
 controllers.forEach(controller => {

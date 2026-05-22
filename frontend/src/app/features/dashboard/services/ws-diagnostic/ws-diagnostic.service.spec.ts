@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { WsDiagnostic } from './ws-diagnostic';
+import { WsDiagnosticService } from './ws-diagnostic.service';
 
-describe('WsDiagnostic', () => {
-  let service: WsDiagnostic;
+describe('WsDiagnosticService', () => {
+  let service: WsDiagnosticService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(WsDiagnostic);
+    service = TestBed.inject(WsDiagnosticService);
   });
 
   it('should be created', () => {
