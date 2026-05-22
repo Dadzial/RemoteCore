@@ -3,7 +3,6 @@ import { WebSocketService } from '../web-socket/web-socket.service';
 import { Observable } from 'rxjs';
 
 export interface SystemStatus {
-  heap: number;
   rssi: number;
   uptime: number;
 }
