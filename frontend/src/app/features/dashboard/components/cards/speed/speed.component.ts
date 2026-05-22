@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
-import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic';
+import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic.service';
 import {WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
 import {WsCameraService} from '../../../services/ws-camera/ws-camera.service';
 
