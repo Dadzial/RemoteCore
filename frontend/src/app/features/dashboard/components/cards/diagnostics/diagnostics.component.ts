@@ -68,7 +68,7 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         } else if (msg.includes('Lidar') || msg.includes('VL53L5CX')) {
           const color = (log.level === 'warning' || log.level === 'error') ? '#ff0000' : '#00ff00';
           this.updateSceneColor(this.lidarModel.scene(), color);
-        } else if (msg.includes('zautoryzowany') || msg.includes('WebSocket')) {
+        } else if (msg.includes('authorized') || msg.includes('WebSocket')) {
           this.updateSceneColor(this.esp32Model.scene(), '#00ff00');
         }
       })
