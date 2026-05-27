@@ -1,7 +1,7 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, OnInit, HostListener } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {WsSteeringService} from '../../../services/ws-steering/ws-steering.service';
-import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic.service';
+import {WsDiagnosticService} from '../../../services/ws-diagnostic/ws-diagnostic';
 import {WsGyroService} from '../../../services/ws-gryo/ws-gyro.service';
 import {WsCameraService} from '../../../services/ws-camera/ws-camera.service';
 
@@ -14,7 +14,7 @@ type NgxGaugeCap = 'round' | 'butt';
   templateUrl: './speed.component.html',
   styleUrl: './speed.component.css',
 })
-export class SpeedComponent {
+export class SpeedComponent implements OnInit {
   private steeringWs = inject(WsSteeringService);
   private diagnosticWs = inject(WsDiagnosticService);
   private gyroWs = inject(WsGyroService);
@@ -27,11 +27,16 @@ export class SpeedComponent {
   private lastImuT = 0;
   private lastLidarT = 0;
 
+  public mainGaugeSize = signal(190);
+  public sideGaugeSize = signal(125);
+  public mainGaugeThick = signal(12);
+  public sideGaugeThick = signal(8);
 
   public vibration = signal(0);
   private lastAccel = { ax: 0, ay: 0, az: 0 };
 
   constructor() {
+    this.updateGaugeSizes();
     this.gyroWs.getGyroData$().subscribe(data => {
       if (!data) return;
       const now = Date.now();
@@ -58,6 +63,39 @@ export class SpeedComponent {
       }
       this.lastLidarT = now;
     });
+  }
+
+  ngOnInit() {
+    this.updateGaugeSizes();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.updateGaugeSizes();
+  }
+
+  private updateGaugeSizes() {
+    const width = window.innerWidth;
+
+    if (width <= 600) {
+     
+      this.mainGaugeSize.set(120);
+      this.sideGaugeSize.set(80);
+      this.mainGaugeThick.set(8);
+      this.sideGaugeThick.set(6);
+    } else if (width <= 1280) {
+    
+      this.mainGaugeSize.set(150);
+      this.sideGaugeSize.set(100);
+      this.mainGaugeThick.set(10);
+      this.sideGaugeThick.set(7);
+    } else {
+     
+      this.mainGaugeSize.set(190);
+      this.sideGaugeSize.set(125);
+      this.mainGaugeThick.set(12);
+      this.sideGaugeThick.set(8);
+    }
   }
 
   speedValue = computed(() => this.steeringWs.currentSpeed());

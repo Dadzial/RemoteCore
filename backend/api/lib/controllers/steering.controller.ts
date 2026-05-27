@@ -36,7 +36,7 @@ class SteeringController implements wsControllerInterface {
             });
 
             socket.on('steering:stop', () => {
-                this.io.emit('steering:stop');
+                socket.broadcast.emit('steering:stop');
                 logger.info(`[Steering] STOP command has been sent`);
             });
 

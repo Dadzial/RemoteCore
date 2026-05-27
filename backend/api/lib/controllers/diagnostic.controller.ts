@@ -18,7 +18,7 @@ class DiagnosticController implements wsControllerInterface {
             });
 
             socket.on('diagnostic:log', (payload: any) => {
-                // Forward logs to the dashboard
+                
                 socket.broadcast.emit('diagnostic:log', payload);
             });
 
