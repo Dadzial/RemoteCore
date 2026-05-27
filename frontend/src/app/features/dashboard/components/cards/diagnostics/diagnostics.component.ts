@@ -60,12 +60,37 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
     this.sub.add(
       this.wsDiagnostic.onLog().subscribe((log: LogEntry) => {
         this.logs.update(logs => [...logs, log].slice(-50));
+
+        const msg = log.message;
+        if (msg.includes('MPU6050') || msg.includes('IMU')) {
+          const color = log.level === 'error' ? '#ff0000' : '#00ff00';
+          this.updateSceneColor(this.imuModel.scene(), color);
+        } else if (msg.includes('Lidar') || msg.includes('VL53L5CX')) {
+          const color = (log.level === 'warning' || log.level === 'error') ? '#ff0000' : '#00ff00';
+          this.updateSceneColor(this.lidarModel.scene(), color);
+        } else if (msg.includes('zautoryzowany') || msg.includes('WebSocket')) {
+          this.updateSceneColor(this.esp32Model.scene(), '#00ff00');
+        }
       })
     );
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
+  }
+
+  private updateSceneColor(scene: THREE.Group | THREE.Object3D | undefined | null, colorHex: string) {
+    if (!scene) return;
+    scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material instanceof THREE.MeshStandardMaterial) {
+          mesh.material.color.set(colorHex);
+          mesh.material.emissive.set(colorHex);
+          mesh.material.emissiveIntensity = 0.3;
+        }
+      }
+    });
   }
 
   private initModel(scene: THREE.Group | THREE.Object3D | undefined | null) {
