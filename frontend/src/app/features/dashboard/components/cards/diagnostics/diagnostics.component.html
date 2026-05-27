@@ -54,11 +54,10 @@
   <div class="logs-section">
     <p class="wrapper-label">Logs</p>
     <div class="log-console">
-      @for (log of info(); track $index) {
-        <div class="log-entry" [class]="log.type">
-          <span class="timestamp">[{{ log.timestamp }}]</span> {{ log.message }}
-        </div>
-      }
+      <div class="log-entry"><span class="timestamp">[21:44:01]</span> System initialized</div>
+      <div class="log-entry"><span class="timestamp">[21:44:05]</span> Robot connected</div>
+      <div class="log-entry success"><span class="timestamp">[21:44:06]</span> WebSocket Handshake OK</div>
+      <div class="log-entry warning"><span class="timestamp">[21:44:10]</span> Battery at 85%</div>
     </div>
   </div>
 </div>

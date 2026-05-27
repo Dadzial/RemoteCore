@@ -33,35 +33,68 @@
 }
 
 /* Content */
-.wrapper-label{
-  font-family: Inter , sans-serif;
-  font-size: 0.85rem;
-  color: var(--color-text);
-}
-.view-section {
-  flex: 1;
+
+.view-section{
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  margin-bottom: 1rem;
 }
 
 .canvas-wrapper {
   flex: 1;
+  min-height: 200px;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
 }
 
+ngt-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.placeholder-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.wrapper-label {
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  margin-left: 0.2rem;
+}
+
+.section {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.placeholder-text {
+  font-family: Inter, sans-serif;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  opacity: 0.3;
+}
+
 .logs-section {
-  flex: 0.5;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
 }
 
 .log-console {
-  flex: 1;
+  flex-grow: 1;
   background-color: #0c0c0c;
   border-radius: 8px;
   padding: 0.8rem;
@@ -71,6 +104,7 @@
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5);
+  max-height: 100px;
 }
 
 .log-entry {
@@ -95,3 +129,4 @@
   border-radius: 10px;
 }
 
+/* 3d Styles */
