@@ -5,6 +5,8 @@ import ConnectionController from "./controllers/connection.controller";
 import GryoController from "./controllers/gryo.controller";
 import LidarController from "./controllers/lidar.controller";
 import DiagnosticController from "./controllers/diagnostic.controller";
+import express from 'express';
+import path from 'path';
 
 const app = new App();
 const io = app.getIo();

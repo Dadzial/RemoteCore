@@ -78,19 +78,19 @@ export class SpeedComponent implements OnInit {
     const width = window.innerWidth;
 
     if (width <= 600) {
-      // Mobile
+     
       this.mainGaugeSize.set(120);
       this.sideGaugeSize.set(80);
       this.mainGaugeThick.set(8);
       this.sideGaugeThick.set(6);
     } else if (width <= 1280) {
-      // Tablet
+    
       this.mainGaugeSize.set(150);
       this.sideGaugeSize.set(100);
       this.mainGaugeThick.set(10);
       this.sideGaugeThick.set(7);
     } else {
-      // Desktop
+     
       this.mainGaugeSize.set(190);
       this.sideGaugeSize.set(125);
       this.mainGaugeThick.set(12);

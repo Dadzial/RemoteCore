@@ -1,8 +1,12 @@
-import { Component, ChangeDetectionStrategy, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, effect, OnInit, OnDestroy } from '@angular/core';
 import { extend, NgtState } from 'angular-three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { gltfResource } from 'angular-three-soba/loaders';
+import { WsDiagnosticService, LogEntry } from '../../../services/ws-diagnostic/ws-diagnostic.service';
+import { WsGyroService, GyroData } from '../../../services/ws-gryo/ws-gyro.service';
+import { Subscription } from 'rxjs';
+import { signal } from '@angular/core';
 
 extend(THREE);
 extend({ OrbitControls });
@@ -14,7 +18,7 @@ extend({ OrbitControls });
   styleUrl: './diagnostics.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiagnosticsComponent {
+export class DiagnosticsComponent implements OnInit, OnDestroy {
   public truckModel = gltfResource(() => '/assets/models/robot/robot_truck.glb');
   public boardModel = gltfResource(() => '/assets/models/robot/robot_board.glb');
   public esp32Model = gltfResource(() => '/assets/models/robot/robot_esp32.glb');
@@ -22,9 +26,16 @@ export class DiagnosticsComponent {
   public imuModel = gltfResource(() => '/assets/models/robot/robot_imu.glb');
   public motorModel = gltfResource(() => '/assets/models/robot/robot_motor_h.glb');
 
-  private originalColors = new Map<string, string>();
+  public robotRotation = signal<[number, number, number]>([0, 0, 0]);
+  public logs = signal<LogEntry[]>([]);
 
-  constructor() {
+  private originalColors = new Map<string, string>();
+  private sub: Subscription = new Subscription();
+
+  constructor(
+    private wsDiagnostic: WsDiagnosticService,
+    private wsGyro: WsGyroService
+  ) {
     effect(() => {
       this.initModel(this.truckModel.scene());
       this.initModel(this.boardModel.scene());
@@ -32,6 +43,53 @@ export class DiagnosticsComponent {
       this.initModel(this.lidarModel.scene());
       this.initModel(this.imuModel.scene());
       this.initModel(this.motorModel.scene());
+    });
+  }
+
+  ngOnInit() {
+    this.sub.add(
+      this.wsGyro.getGyroData$().subscribe((data: GyroData) => {
+        const r = THREE.MathUtils.degToRad(data.roll || 0);
+        const p = THREE.MathUtils.degToRad(data.pitch || 0);
+        const y = THREE.MathUtils.degToRad(data.yaw || 0);
+
+        this.robotRotation.set([p, y, r]);
+      })
+    );
+
+    this.sub.add(
+      this.wsDiagnostic.onLog().subscribe((log: LogEntry) => {
+        this.logs.update(logs => [...logs, log].slice(-50));
+
+        const msg = log.message;
+        if (msg.includes('MPU6050') || msg.includes('IMU')) {
+          const color = log.level === 'error' ? '#ff0000' : '#00ff00';
+          this.updateSceneColor(this.imuModel.scene(), color);
+        } else if (msg.includes('Lidar') || msg.includes('VL53L5CX')) {
+          const color = (log.level === 'warning' || log.level === 'error') ? '#ff0000' : '#00ff00';
+          this.updateSceneColor(this.lidarModel.scene(), color);
+        } else if (msg.includes('zautoryzowany') || msg.includes('WebSocket')) {
+          this.updateSceneColor(this.esp32Model.scene(), '#00ff00');
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+
+  private updateSceneColor(scene: THREE.Group | THREE.Object3D | undefined | null, colorHex: string) {
+    if (!scene) return;
+    scene.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        if (mesh.material instanceof THREE.MeshStandardMaterial) {
+          mesh.material.color.set(colorHex);
+          mesh.material.emissive.set(colorHex);
+          mesh.material.emissiveIntensity = 0.3;
+        }
+      }
     });
   }
 
