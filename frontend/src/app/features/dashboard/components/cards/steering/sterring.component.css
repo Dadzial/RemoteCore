@@ -200,7 +200,6 @@
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.6;
-  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
@@ -219,6 +218,173 @@
 
 .control-button:active {
   transform: scale(0.97);
+}
+
+@media screen and (min-width: 1090px) and (max-width: 1560px) {
+  .container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: 10px;
+    padding: 1rem;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .header {
+    width: 100%;
+    align-self: self-start;
+    text-align: left;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .joystick-section {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 0;
+    margin-left: 2rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .joystick-section .wrapper-label {
+    margin-bottom: 0.1rem;
+  }
+
+  .telemetry {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    font-family: Inter , sans-serif;
+    font-size: 0.6rem;
+    color: var(--color-text);
+    min-width: 120px;
+  }
+
+  .joystick-wrapper {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+
+  /* Keyboard Mode / WASD */
+  .keyboard-section {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 0;
+    margin-left: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .wasd-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+
+  .wasd-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .wasd-btn {
+    width: 48px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--color-text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 0 rgba(0, 0, 0, 0.3);
+    user-select: none;
+    opacity: 0.9;
+  }
+
+  .wasd-btn.pressed {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: white;
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+    opacity: 1;
+  }
+
+  .wasd-btn:hover:not(.pressed) {
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+  }
+
+  .base {
+    width: 110px;
+    height: 110px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+    pointer-events: none;
+    touch-action: none;
+  }
+
+
+  .thumb {
+    width: 45px;
+    height: 45px;
+    background: #3c3c3c;
+    border-radius: 50%;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+    cursor: grab;
+    transition: transform 0.05s ease-out;
+    touch-action: none;
+  }
+
+  .thumb:active {
+    cursor: grabbing;
+  }
+
+  .control-section {
+    width: auto;
+    margin-left: auto;
+    margin-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+  }
+
+  .control-mode-wrapper {
+    flex-direction: column;
+    height: auto;
+    width: 140px;
+    border-radius: 8px;
+  }
+
+  .control-button {
+    height: 64px;
+    width: 100%;
+    border-radius: 6px;
+  }
 }
 
 

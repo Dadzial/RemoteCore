@@ -132,7 +132,20 @@
   line-height: 1.2 !important;
 }
 
-@media (max-width: 600px) {
+@media screen and (min-width: 1090px) and (max-width: 1560px){
+  .clocks {
+    padding: 0 0.2rem;
+    margin-top: 5px;
+  }
+  .main-gauge-wrapper {
+    transform: translateY(-20px);
+  }
+  .side-gauge {
+    transform: translateY(0px);
+  }
+}
+
+@media (max-width: 1090px) {
   .container {
     padding: 0.7rem;
   }
