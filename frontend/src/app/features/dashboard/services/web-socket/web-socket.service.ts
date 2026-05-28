@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -8,6 +8,8 @@ import { io, Socket } from 'socket.io-client';
 export class WebSocketService {
   private socket?: Socket;
 
+  constructor(private ngZone: NgZone) {}
+
   public connect(url: string): void {
     if (!this.socket) {
       console.log('[WS] Connecting to:', url);
@@ -16,9 +18,23 @@ export class WebSocketService {
         reconnection: true
       });
 
-      this.socket.on('connect', () => console.log('[WS] Connected:', this.socket?.id));
-      this.socket.on('connect_error', (err) => console.error('[WS] Connection error:', err));
-      this.socket.on('disconnect', (reason) => console.warn('[WS] Disconnected:', reason));
+      this.socket.on('connect', () => {
+        this.ngZone.run(() => {
+          console.log('[WS] Connected:', this.socket?.id);
+        });
+      });
+
+      this.socket.on('connect_error', (err) => {
+        this.ngZone.run(() => {
+          console.error('[WS] Connection error:', err);
+        });
+      });
+
+      this.socket.on('disconnect', (reason) => {
+        this.ngZone.run(() => {
+          console.warn('[WS] Disconnected:', reason);
+        });
+      });
     }
   }
 
@@ -26,9 +42,12 @@ export class WebSocketService {
     return new Observable((observer) => {
       const checkAndSubscribe = () => {
         if (this.socket) {
-          this.socket.on(event, (data: T) => observer.next(data));
+          this.socket.on(event, (data: T) => {
+            this.ngZone.run(() => {
+              observer.next(data);
+            });
+          });
         } else {
-          // Jeśli gniazdo jeszcze nie istnieje, spróbuj ponownie za chwilę
           setTimeout(checkAndSubscribe, 100);
         }
       };

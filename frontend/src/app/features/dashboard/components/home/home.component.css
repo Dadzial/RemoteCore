@@ -8,6 +8,7 @@
   padding: 0.5rem;
   box-sizing: border-box;
 }
+.main-container::before {
   content: '';
   position: absolute;
   width: 600px;
