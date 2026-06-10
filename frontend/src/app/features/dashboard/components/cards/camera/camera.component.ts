@@ -8,6 +8,14 @@ import { Subscription } from 'rxjs';
   templateUrl: './camera.component.html',
   styleUrl: './camera.component.css',
 })
+/**
+ * @class CameraComponent
+ * @implements {OnInit, OnDestroy, AfterViewInit}
+ * @brief Komponent wizualizujący dane z sensora Lidar w formie "kamery" termicznej/odległościowej.
+ *
+ * Komponent odbiera 64 punkty pomiarowe (siatka 8x8), wykonuje interpolację dwuliniową (bilinear interpolation)
+ * w celu wygładzenia obrazu do rozdzielczości 64x64 i renderuje wynik na elemencie Canvas.
+ */
 export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('lidarCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
   public distances: number[] = [];
@@ -20,8 +28,16 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
   private ctx: CanvasRenderingContext2D | null = null;
   private readonly RESOLUTION = 64;
 
+  /**
+   * @brief Konstruktor komponentu kamery.
+   * @param ws Serwis WebSocket obsługujący dane z Lidara.
+   */
   constructor(private ws: WsCameraService) {}
 
+  /**
+   * @brief Inicjalizacja komponentu.
+   * Subskrybuje strumień danych Lidar i wywołuje przeliczenie statystyk oraz renderowanie.
+   */
   ngOnInit() {
     this.sub = this.ws.getLidarData$().subscribe((data: CameraData) => {
       this.distances = data.distances;
@@ -30,6 +46,10 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * @brief Oblicza statystyki pomiarowe (minimum, średnia).
+   * Określa również status ostrzegawczy na podstawie najmniejszej odległości.
+   */
   private calculateStats() {
     if (!this.distances.length) return;
 
@@ -47,10 +67,18 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stats.status = '';
     }
     }
+
+  /**
+   * @brief Cykl życia po zainicjowaniu widoku.
+   * Inicjalizuje kontekst Canvas.
+   */
   ngAfterViewInit() {
     this.initCanvas();
   }
 
+  /**
+   * @brief Konfiguruje płótno (Canvas) do renderowania.
+   */
   private initCanvas() {
     if (this.canvasRef) {
       const canvas = this.canvasRef.nativeElement;
@@ -60,6 +88,12 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  /**
+   * @brief Główna pętla renderująca obraz Lidara.
+   *
+   * Wykonuje mapowanie siatki 8x8 na 64x64 przy użyciu interpolacji dwuliniowej (lerp).
+   * Każdy piksel otrzymuje kolor z palety HSL na podstawie odległości.
+   */
   private renderLidar() {
     if (!this.ctx || !this.distances || this.distances.length !== 64) return;
 
@@ -69,6 +103,7 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let y = 0; y < this.RESOLUTION; y++) {
       for (let x = 0; x < this.RESOLUTION; x++) {
 
+        // Skalowanie współrzędnych do zakresu 0-7 (siatka 8x8)
         const gx = (x / (this.RESOLUTION - 1)) * 7;
         const gy = (y / (this.RESOLUTION - 1)) * 7;
 
@@ -78,11 +113,13 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
         const tx = gx - gxi;
         const ty = gy - gyi;
 
+        // Pobranie sąsiednich punktów do interpolacji
         const c00 = this.distances[gyi * 8 + gxi];
         const c10 = this.distances[gyi * 8 + (gxi + 1 > 7 ? 7 : gxi + 1)];
         const c01 = this.distances[(gyi + 1 > 7 ? 7 : gyi + 1) * 8 + gxi];
         const c11 = this.distances[(gyi + 1 > 7 ? 7 : gyi + 1) * 8 + (gxi + 1 > 7 ? 7 : gxi + 1)];
 
+        // Interpolacja dwuliniowa
         const distance = this.lerp(this.lerp(c00, c10, tx), this.lerp(c01, c11, tx), ty);
 
         const [r, g, b] = this.getRGBColor(distance);
@@ -97,20 +134,35 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ctx.putImageData(imageData, 0, 0);
   }
 
+  /**
+   * @brief Funkcja interpolacji liniowej (LERP).
+   * @param a Wartość początkowa.
+   * @param b Wartość końcowa.
+   * @param t Współczynnik (0-1).
+   * @return Przeliczona wartość pośrednia.
+   */
   private lerp(a: number, b: number, t: number): number {
     return a + (b - a) * t;
   }
 
+  /**
+   * @brief Mapuje odległość (mm) na kolor RGB.
+   * Wykorzystuje model HSL (od niebieskiego dla dalekich obiektów do czerwonego dla bliskich).
+   * @param distance Odległość w mm.
+   */
   private getRGBColor(distance: number): [number, number, number] {
     if (!distance || distance === 0) return [12, 12, 12];
 
-    const maxDist = 2000;
+    const maxDist = 2000; // Maksymalny zasięg wizualizacji
     const norm = Math.min(1, distance / maxDist);
 
-    const hue = norm * 240;
+    const hue = norm * 240; // 0 (red) to 240 (blue)
     return this.hslToRgb(hue / 360, 0.8, 0.5);
   }
 
+  /**
+   * @brief Konwertuje model kolorów HSL na RGB.
+   */
   private hslToRgb(h: number, s: number, l: number): [number, number, number] {
     let r, g, b;
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
@@ -123,6 +175,9 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
   }
 
+  /**
+   * @brief Pomocnicza funkcja do przeliczania barwy (hue) na składową RGB.
+   */
   private hueToRgb(p: number, q: number, t: number): number {
     if (t < 0) t += 1;
     if (t > 1) t -= 1;
@@ -132,6 +187,9 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     return p;
   }
 
+  /**
+   * @brief Sprzątanie po zniszczeniu komponentu.
+   */
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }

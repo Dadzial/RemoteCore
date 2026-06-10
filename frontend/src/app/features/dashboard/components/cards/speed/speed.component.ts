@@ -14,6 +14,14 @@ type NgxGaugeCap = 'round' | 'butt';
   templateUrl: './speed.component.html',
   styleUrl: './speed.component.css',
 })
+/**
+ * @class SpeedComponent
+ * @implements {OnInit}
+ * @brief Komponent wyświetlający wskaźniki prędkości, jakości połączenia oraz wibracji.
+ *
+ * Wykorzystuje bibliotekę ngx-gauge do wizualizacji parametrów robota.
+ * Oblicza częstotliwość odświeżania danych (Hz) dla IMU i Lidara oraz czas pracy urządzenia (uptime).
+ */
 export class SpeedComponent implements OnInit {
   private steeringWs = inject(WsSteeringService);
   private diagnosticWs = inject(WsDiagnosticService);
@@ -35,17 +43,24 @@ export class SpeedComponent implements OnInit {
   public vibration = signal(0);
   private lastAccel = { ax: 0, ay: 0, az: 0 };
 
+  /**
+   * @brief Konstruktor komponentu prędkościomierza.
+   * Inicjalizuje subskrypcje w celu obliczania Hz oraz poziomu wibracji na podstawie zmian przyspieszenia.
+   */
   constructor() {
     this.updateGaugeSizes();
     this.gyroWs.getGyroData$().subscribe(data => {
       if (!data) return;
       const now = Date.now();
+
+      // Obliczanie częstotliwości IMU (Hz)
       if (this.lastImuT) {
         const dt = (now - this.lastImuT) / 1000;
         if (dt > 0) this.imuHz.set(Math.round(1 / dt));
       }
       this.lastImuT = now;
 
+      // Obliczanie poziomu wibracji jako różnicy wektorowej przyspieszeń
       const dv = Math.sqrt(
         Math.pow(data.ax - this.lastAccel.ax, 2) +
         Math.pow(data.ay - this.lastAccel.ay, 2) +
@@ -57,6 +72,7 @@ export class SpeedComponent implements OnInit {
 
     this.cameraWs.getLidarData$().subscribe(() => {
       const now = Date.now();
+      // Obliczanie częstotliwości Lidara (Hz)
       if (this.lastLidarT) {
         const dt = (now - this.lastLidarT) / 1000;
         if (dt > 0) this.lidarHz.set(Math.round(1 / dt));
@@ -65,15 +81,24 @@ export class SpeedComponent implements OnInit {
     });
   }
 
+  /**
+   * @brief Inicjalizacja komponentu.
+   */
   ngOnInit() {
     this.updateGaugeSizes();
   }
 
+  /**
+   * @brief Obsługa zmiany rozmiaru okna w celu dopasowania wielkości zegarów.
+   */
   @HostListener('window:resize')
   onResize() {
     this.updateGaugeSizes();
   }
 
+  /**
+   * @brief Dostosowuje rozmiary i grubość zegarów (gauges) do aktualnej szerokości ekranu.
+   */
   private updateGaugeSizes() {
     const width = window.innerWidth;
 
@@ -100,13 +125,22 @@ export class SpeedComponent implements OnInit {
     }
   }
 
+  /**
+   * @brief Obliczona aktualna prędkość pobierana z serwisu sterowania.
+   */
   speedValue = computed(() => this.steeringWs.currentSpeed());
 
+  /**
+   * @brief Mapuje wartość RSSI na procentową jakość połączenia (Link Quality).
+   */
   linkQuality = computed(() => {
     const rssi = this.status()?.rssi ?? -100;
     return Math.max(0, Math.min(100, 2 * (rssi + 100)));
   });
 
+  /**
+   * @brief Formatuje czas pracy urządzenia (ms) do postaci HH:MM:SS.
+   */
   runtimeValue = computed(() => {
     const uptime = this.status()?.uptime ?? 0;
     const h = Math.floor(uptime / 3600000);

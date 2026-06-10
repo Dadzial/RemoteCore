@@ -8,6 +8,14 @@ import {Subscription} from 'rxjs';
   templateUrl: './gryo.component.html',
   styleUrl: './gryo.component.css',
 })
+/**
+ * @class GryoComponent
+ * @implements {OnInit, OnDestroy, AfterViewInit}
+ * @brief Komponent wizualizujący dane z jednostki IMU (akcelerometr i żyroskop).
+ *
+ * Wyświetla aktualne przyspieszenia (osie X, Y, Z), orientację (Pitch, Roll, Yaw)
+ * oraz sztuczny horyzont. Dodatkowo rysuje wykresy historyczne dla tych danych na elementach Canvas.
+ */
 export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('accelChart') accelCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('orientChart') orientCanvas!: ElementRef<HTMLCanvasElement>;
@@ -17,8 +25,16 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
   private history: GyroData[] = [];
   private readonly MAX_HISTORY = 100;
 
+  /**
+   * @brief Konstruktor komponentu żyroskopu.
+   * @param ws Serwis WebSocket dostarczający dane IMU.
+   */
   constructor(private ws: WsGyroService) {}
 
+  /**
+   * @brief Inicjalizacja komponentu.
+   * Subskrybuje dane IMU, aktualizuje historię pomiarów i odświeża wykresy.
+   */
   ngOnInit() {
     this.sub = this.ws.getGyroData$().subscribe((data: GyroData | undefined) => {
       if (data) {
@@ -29,10 +45,17 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * @brief Cykl życia po zainicjowaniu widoku.
+   * Przygotowuje elementy Canvas pod wykresy.
+   */
   ngAfterViewInit() {
     this.initCharts();
   }
 
+  /**
+   * @brief Inicjalizuje wymiary płócien (Canvas) biorąc pod uwagę gęstość pikseli urządzenia.
+   */
   private initCharts() {
     [this.accelCanvas, this.orientCanvas].forEach(canvas => {
       if (canvas) {
@@ -42,6 +65,11 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * @brief Aktualizuje bufor historii pomiarów.
+   * Przechowuje do MAX_HISTORY ostatnich odczytów.
+   * @param data Nowy odczyt IMU.
+   */
   private updateHistory(data: GyroData) {
     this.history.push(data);
     if (this.history.length > this.MAX_HISTORY) {
@@ -49,11 +77,21 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  /**
+   * @brief Wywołuje rysowanie obu wykresów (przyspieszenia i orientacji).
+   */
   private drawCharts() {
     this.drawSingleChart(this.accelCanvas, ['ax', 'ay', 'az'], 20, ['#4ade80', '#fbbf24', '#f87171']);
     this.drawSingleChart(this.orientCanvas, ['pitch', 'roll', 'yaw'], 180, ['#60a5fa', '#a78bfa', '#f472b6']);
   }
 
+  /**
+   * @brief Rysuje pojedynczy wykres liniowy na elemencie Canvas.
+   * @param canvasRef Referencja do elementu Canvas.
+   * @param keys Klucze danych z obiektu GyroData do narysowania.
+   * @param range Zakres wartości (skalowanie osi Y).
+   * @param colors Tablica kolorów dla poszczególnych linii.
+   */
   private drawSingleChart(canvasRef: ElementRef<HTMLCanvasElement>, keys: string[], range: number, colors: string[]) {
     if (!canvasRef) return;
     const canvas = canvasRef.nativeElement;
@@ -62,6 +100,7 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Rysowanie siatki tła
     ctx.strokeStyle = 'rgba(255,255,255,0.05)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -71,6 +110,7 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     ctx.stroke();
 
+    // Rysowanie linii danych
     keys.forEach((key, kidx) => {
       ctx.strokeStyle = colors[kidx];
       ctx.lineWidth = 2;
@@ -88,12 +128,21 @@ export class GryoComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * @brief Oblicza szerokość paska postępu (Progress Bar) na podstawie wartości.
+   * @param value Aktualna wartość.
+   * @param max Wartość maksymalna (100%).
+   * @return Procentowa szerokość paska.
+   */
   getBarWidth(value: number, max: number): number {
     const absVal = Math.abs(value);
     const percentage = (absVal / max) * 100;
     return Math.min(percentage, 100);
   }
 
+  /**
+   * @brief Sprzątanie subskrypcji.
+   */
   ngOnDestroy() {
     this.sub?.unsubscribe();
   }

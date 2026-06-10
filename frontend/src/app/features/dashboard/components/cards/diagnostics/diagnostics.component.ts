@@ -18,6 +18,15 @@ extend({ OrbitControls });
   styleUrl: './diagnostics.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
+/**
+ * @class DiagnosticsComponent
+ * @implements {OnInit, OnDestroy}
+ * @brief Komponent diagnostyczny wykorzystujący wizualizację 3D (Three.js/Angular Three).
+ *
+ * Wyświetla model 3D robota, którego orientacja jest aktualizowana w czasie rzeczywistym
+ * na podstawie danych z żyroskopu. Dodatkowo komponent wyświetla logi systemowe
+ * i zmienia kolory części modelu 3D w zależności od stanu podzespołów (np. błąd IMU).
+ */
 export class DiagnosticsComponent implements OnInit, OnDestroy {
   public truckModel = gltfResource(() => '/assets/models/robot/robot_truck.glb');
   public boardModel = gltfResource(() => '/assets/models/robot/robot_board.glb');
@@ -32,6 +41,12 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
   private originalColors = new Map<string, string>();
   private sub: Subscription = new Subscription();
 
+  /**
+   * @brief Konstruktor komponentu diagnostyki.
+   * Ustawia efekt (effect) monitorujący ładowanie modeli 3D w celu ich inicjalizacji.
+   * @param wsDiagnostic Serwis logów diagnostycznych.
+   * @param wsGyro Serwis danych z żyroskopu.
+   */
   constructor(
     private wsDiagnostic: WsDiagnosticService,
     private wsGyro: WsGyroService
@@ -46,6 +61,11 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * @brief Inicjalizacja subskrypcji danych.
+   * - Aktualizuje rotację modelu 3D na podstawie żyroskopu.
+   * - Przetwarza logi diagnostyczne i wizualizuje statusy na modelu (kolory).
+   */
   ngOnInit() {
     this.sub.add(
       this.wsGyro.getGyroData$().subscribe((data: GyroData) => {
@@ -53,6 +73,7 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         const p = THREE.MathUtils.degToRad(data.pitch || 0);
         const y = THREE.MathUtils.degToRad(data.yaw || 0);
 
+        // Mapowanie osi IMU na osie Three.js
         this.robotRotation.set([p, y, r]);
       })
     );
@@ -62,6 +83,7 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         this.logs.update(logs => [...logs, log].slice(-50));
 
         const msg = log.message;
+        // Logika wizualnej sygnalizacji błędów na modelu 3D
         if (msg.includes('MPU6050') || msg.includes('IMU')) {
           const color = log.level === 'error' ? '#ff0000' : '#00ff00';
           this.updateSceneColor(this.imuModel.scene(), color);
@@ -75,10 +97,18 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
     );
   }
 
+  /**
+   * @brief Sprzątanie subskrypcji.
+   */
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
+  /**
+   * @brief Zmienia kolor i emisyjność materiałów w danej scenie (podmodelu) 3D.
+   * @param scene Obiekt 3D (Group/Object3D).
+   * @param colorHex Kolor w formacie hex.
+   */
   private updateSceneColor(scene: THREE.Group | THREE.Object3D | undefined | null, colorHex: string) {
     if (!scene) return;
     scene.traverse((child) => {
@@ -93,6 +123,11 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * @brief Inicjalizuje materiały modelu po załadowaniu pliku GLB.
+   * Ustawia bazowe kolory, metaliczność i chropowatość materiałów.
+   * @param scene Załadowana scena 3D.
+   */
   private initModel(scene: THREE.Group | THREE.Object3D | undefined | null) {
     if (!scene) return;
     scene.traverse((child) => {
@@ -121,6 +156,10 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * @brief Obsługa zdarzenia utworzenia płótna Three.js.
+   * @param state Stan renderera Angular Three.
+   */
   onCanvasCreated(state: NgtState) {
     state.gl.setClearColor(0x000000, 0);
   }

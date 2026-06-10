@@ -3,9 +3,21 @@ import { Server, Socket } from "socket.io";
 import logger from "../utils/logger";
 import Joi from 'joi';
 
+/**
+ * @class GryoController
+ * @implements {wsControllerInterface}
+ * @brief Kontroler obsługujący dane z żyroskopu i akcelerometru (IMU).
+ *
+ * Klasa odbiera surowe dane IMU, waliduje je przy użyciu schematu Joi,
+ * a następnie rozsyła przetworzone dane (orientację i przyspieszenie) do klientów.
+ */
 class GryoController implements wsControllerInterface {
     public io: Server;
 
+    /**
+     * @brief Schemat walidacji danych IMU.
+     * Obsługuje skrócone (r, p, y, t) oraz pełne nazwy pól.
+     */
     private gyroSchema = Joi.object({
         r: Joi.number().optional(),
         p: Joi.number().optional(),
@@ -20,10 +32,20 @@ class GryoController implements wsControllerInterface {
         timestamp: Joi.number().optional()
     }).min(1);
 
+    /**
+     * @brief Konstruktor kontrolera IMU.
+     * @param io Instancja serwera Socket.io.
+     */
     constructor(io: Server) {
         this.io = io;
     }
 
+    /**
+     * @brief Inicjalizuje obsługę zdarzeń dla danych żyroskopu.
+     *
+     * Nasłuchuje na zdarzenia 'g' oraz 'gyro:data', przetwarza je,
+     * waliduje i rozsyła wynik do pozostałych klientów.
+     */
     public initializeWebSocketHandler(): void {
         this.io.on('connection', (socket: Socket) => {
             logger.info(`[Gyro] New Connection: ${socket.id}`);

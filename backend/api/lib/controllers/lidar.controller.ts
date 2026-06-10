@@ -3,18 +3,40 @@ import Joi from "joi";
 import { Server, Socket } from "socket.io";
 import logger from "../utils/logger";
 
+/**
+ * @class LidarController
+ * @implements {wsControllerInterface}
+ * @brief Kontroler obsługujący dane z sensora Lidar (VL53L5CX).
+ *
+ * Odpowiada za odbieranie tablicy odległości z sensora, walidację danych
+ * i rozsyłanie ich do klientów wizualizujących mapę otoczenia.
+ */
 class LidarController implements wsControllerInterface {
     public io: Server;
 
+    /**
+     * @brief Schemat walidacji danych Lidar.
+     * Wymaga tablicy 'distances' (max 64 elementy) oraz znacznika czasu.
+     */
     private lidarSchema = Joi.object({
         distances: Joi.array().items(Joi.number()).max(64).required(),
         timestamp: Joi.number().required()
     });
 
+    /**
+     * @brief Konstruktor kontrolera Lidar.
+     * @param io Instancja serwera Socket.io.
+     */
     constructor(io: Server) {
         this.io = io;
     }
 
+    /**
+     * @brief Inicjalizuje obsługę zdarzeń Lidar przez WebSocket.
+     *
+     * Nasłuchuje na zdarzenie 'lidar:data', przeprowadza walidację Joi
+     * i przesyła dane dalej do innych połączonych urządzeń.
+     */
     public initializeWebSocketHandler(): void {
         this.io.on('connection', (socket: Socket) => {
             logger.info(`[Lidar] New Connection: ${socket.id}`);

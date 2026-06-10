@@ -13,13 +13,26 @@ export interface GyroData {
   timestamp: number;
 }
 
+/**
+ * @class WsGyroService
+ * @brief Serwis obsługujący odbieranie danych z modułu IMU (żyroskop i akcelerometr).
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class WsGyroService {
 
+  /**
+   * @brief Konstruktor serwisu IMU.
+   * @param ws Serwis WebSocket.
+   */
   constructor(private ws: WebSocketService) {}
 
+  /**
+   * @brief Zwraca strumień danych o orientacji i przyspieszeniu robota.
+   * Mapuje surowe dane na ustrukturyzowany format GyroData.
+   * @return Observable z danymi IMU.
+   */
   getGyroData$(): Observable<GyroData> {
     return this.ws.on<any>('gyro:data').pipe(
       map((data: any) => ({

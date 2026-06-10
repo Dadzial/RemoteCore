@@ -12,6 +12,14 @@ export enum ModeCommands {
   templateUrl: './sterring.component.html',
   styleUrl: './sterring.component.css',
 })
+/**
+ * @class SteeringComponent
+ * @brief Komponent odpowiedzialny za interfejs sterowania robotem.
+ *
+ * Obsługuje dwa tryby sterowania: Joystick (mysz/dotyk) oraz Keyboard (klawisze WASD).
+ * Oblicza miksowanie kanałów (lewy/prawy silnik) na podstawie wychylenia kontrolera
+ * i wysyła komendy przez WebSocket.
+ */
 export class SteeringComponent {
   @ViewChild('container') container!: ElementRef;
 
@@ -19,16 +27,26 @@ export class SteeringComponent {
   public joyStickPos = signal({x: 0, y: 0});
   public activeMode = signal<ModeCommands>(ModeCommands.Joystick);
 
+  /**
+   * @brief Styl CSS dla "grzybka" joysticka, aktualizowany reaktywnie.
+   */
   public readonly thumbStyle = computed(() => ({
     transform: `translate(${this.joyStickPos().x}px, ${this.joyStickPos().y}px)`
   }));
 
+  /**
+   * @brief Konstruktor komponentu sterowania.
+   * @param ws Serwis WebSocket do wysyłania komend ruchu.
+   */
   constructor(private ws: WsSteeringService) {}
 
   public dragging = false;
   private maxRadius = 60;
   public pressedKeys = new Set<string>();
 
+  /**
+   * @brief Obsługa wciśnięcia klawisza na klawiaturze.
+   */
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (this.activeMode() !== ModeCommands.Keyboard) return;
@@ -36,6 +54,9 @@ export class SteeringComponent {
     this.updateFromKeyboard();
   }
 
+  /**
+   * @brief Obsługa puszczenia klawisza na klawiaturze.
+   */
   @HostListener('window:keyup', ['$event'])
   onKeyUp(event: KeyboardEvent) {
     if (this.activeMode() !== ModeCommands.Keyboard) return;
@@ -43,6 +64,9 @@ export class SteeringComponent {
     this.updateFromKeyboard();
   }
 
+  /**
+   * @brief Obsługa wirtualnych przycisków WASD (interfejs dotykowy/klikany).
+   */
   public onVisualKeyStart(key: string) {
     this.pressedKeys.add(key.toLowerCase());
     this.updateFromKeyboard();
@@ -53,6 +77,9 @@ export class SteeringComponent {
     this.updateFromKeyboard();
   }
 
+  /**
+   * @brief Przetwarza stan wciśniętych klawiszy na kierunki X/Y i wysyła komendę.
+   */
   private updateFromKeyboard() {
     let x = 0;
     let y = 0;
@@ -69,6 +96,9 @@ export class SteeringComponent {
     }
   }
 
+  /**
+   * @brief Rozpoczyna przeciąganie joysticka.
+   */
   onStart(event: MouseEvent | TouchEvent) {
     if (this.activeMode() !== ModeCommands.Joystick) return;
     event.preventDefault();
@@ -77,6 +107,9 @@ export class SteeringComponent {
     this.onMove(event);
   }
 
+  /**
+   * @brief Obsługuje ruch joysticka i oblicza jego wychylenie względem środka.
+   */
   @HostListener('window:mousemove', ['$event'])
   @HostListener('window:touchmove', ['$event'])
   onMove(event: MouseEvent | TouchEvent) {
@@ -96,6 +129,7 @@ export class SteeringComponent {
 
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
+    // Ograniczenie ruchu joysticka do maksymalnego promienia
     if (distance > this.maxRadius) {
       deltaX *= this.maxRadius / distance;
       deltaY *= this.maxRadius / distance;
@@ -104,6 +138,9 @@ export class SteeringComponent {
     this.updatePosition(deltaX, deltaY);
   }
 
+  /**
+   * @brief Zakończenie ruchu joysticka - powrót do środka i stop.
+   */
   @HostListener('window:mouseup')
   @HostListener('window:touchend')
   onEnd() {
@@ -113,11 +150,27 @@ export class SteeringComponent {
     this.sendStop();
   }
 
+  /**
+   * @brief Aktualizuje pozycję wizualną i wysyła obliczoną komendę.
+   * @param x Wychylenie w osi X.
+   * @param y Wychylenie w osi Y.
+   */
   private updatePosition(x: number, y: number) {
     this.joyStickPos.set({ x, y });
     this.sendSteeringCommand(y / this.maxRadius * -1, x / this.maxRadius);
   }
 
+  /**
+   * @brief Oblicza wartości mocy dla lewego i prawego silnika (Differential Drive).
+   *
+   * Algorytm miksowania:
+   * - lewy = (przód/tył + lewo/prawo)
+   * - prawy = (przód/tył - lewo/prawo)
+   * Wyniki są ograniczane do zakresu -100 do 100.
+   *
+   * @param y Składowa przód-tył (-1 do 1).
+   * @param x Składowa lewo-prawo (-1 do 1).
+   */
   private sendSteeringCommand(y: number, x: number): void {
     let left  = (y + x) * 100;
     let right = (y - x) * 100;
@@ -128,6 +181,10 @@ export class SteeringComponent {
     this.ws.sendSteeringCommand(left, right);
   }
 
+  /**
+   * @brief Zmienia tryb sterowania (Joystick/Keyboard).
+   * @param command Wybrany tryb.
+   */
   public onCommandClick(command: ModeCommands): void {
     this.activeMode.set(command);
     this.sendStop();
@@ -135,6 +192,9 @@ export class SteeringComponent {
     this.pressedKeys.clear();
   }
 
+  /**
+   * @brief Wysyła polecenie zatrzymania silników.
+   */
   private sendStop(): void {
     this.ws.sendStop();
   }
