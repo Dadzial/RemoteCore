@@ -103,9 +103,10 @@ export class CameraComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let y = 0; y < this.RESOLUTION; y++) {
       for (let x = 0; x < this.RESOLUTION; x++) {
 
-        // Skalowanie współrzędnych do zakresu 0-7 (siatka 8x8)
-        const gx = (x / (this.RESOLUTION - 1)) * 7;
-        const gy = (y / (this.RESOLUTION - 1)) * 7;
+        // Zamiana osi w celu poprawy orientacji (sensor obrócony o 90 stopni)
+        // x (poziom) mapujemy na gy (pion sensora), y (pion) mapujemy na gx (poziom sensora)
+        const gy = (x / (this.RESOLUTION - 1)) * 7;
+        const gx = (y / (this.RESOLUTION - 1)) * 7;
 
         const gxi = Math.floor(gx);
         const gyi = Math.floor(gy);
