@@ -38,33 +38,60 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
   public robotRotation = signal<[number, number, number]>([0, 0, 0]);
   public logs = signal<LogEntry[]>([]);
 
-  private originalColors = new Map<string, string>();
+  // Przechowuje aktualny kolor statusu dla poszczególnych komponentów
+  private imuStatusColor = signal<string | null>(null);
+  private lidarStatusColor = signal<string | null>(null);
+  private espStatusColor = signal<string | null>(null);
+
+  private initializedModels = new WeakSet<THREE.Object3D>();
   private sub: Subscription = new Subscription();
 
   /**
    * @brief Konstruktor komponentu diagnostyki.
-   * Ustawia efekt (effect) monitorujący ładowanie modeli 3D w celu ich inicjalizacji.
-   * @param wsDiagnostic Serwis logów diagnostycznych.
-   * @param wsGyro Serwis danych z żyroskopu.
+   * Ustawia efekty monitorujące ładowanie modeli i zmiany statusów.
    */
   constructor(
     private wsDiagnostic: WsDiagnosticService,
     private wsGyro: WsGyroService
   ) {
+    // Modele bez specjalnych kolorów statusu
     effect(() => {
-      this.initModel(this.truckModel.scene());
-      this.initModel(this.boardModel.scene());
-      this.initModel(this.esp32Model.scene());
-      this.initModel(this.lidarModel.scene());
-      this.initModel(this.imuModel.scene());
-      this.initModel(this.motorModel.scene());
+      this.tryInit(this.truckModel.scene());
+      this.tryInit(this.boardModel.scene());
+      this.tryInit(this.motorModel.scene());
+    });
+
+    // Modele z kolorami statusu - konsolidacja tryInit + updateSceneColor
+    effect(() => {
+      const scene = this.imuModel.scene();
+      const color = this.imuStatusColor();
+      if (scene) {
+        this.tryInit(scene);
+        if (color) this.updateSceneColor(scene, color);
+      }
+    });
+
+    effect(() => {
+      const scene = this.lidarModel.scene();
+      const color = this.lidarStatusColor();
+      if (scene) {
+        this.tryInit(scene);
+        if (color) this.updateSceneColor(scene, color);
+      }
+    });
+
+    effect(() => {
+      const scene = this.esp32Model.scene();
+      const color = this.espStatusColor();
+      if (scene) {
+        this.tryInit(scene);
+        if (color) this.updateSceneColor(scene, color);
+      }
     });
   }
 
   /**
    * @brief Inicjalizacja subskrypcji danych.
-   * - Aktualizuje rotację modelu 3D na podstawie żyroskopu.
-   * - Przetwarza logi diagnostyczne i wizualizuje statusy na modelu (kolory).
    */
   ngOnInit() {
     this.sub.add(
@@ -72,8 +99,6 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         const r = THREE.MathUtils.degToRad(data.roll || 0);
         const p = THREE.MathUtils.degToRad(data.pitch || 0);
         const y = THREE.MathUtils.degToRad(data.yaw || 0);
-
-        // Mapowanie osi IMU na osie Three.js
         this.robotRotation.set([p, y, r]);
       })
     );
@@ -83,32 +108,30 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         this.logs.update(logs => [...logs, log].slice(-50));
 
         const msg = log.message;
-        // Logika wizualnej sygnalizacji błędów na modelu 3D
         if (msg.includes('MPU6050') || msg.includes('IMU')) {
-          const color = log.level === 'error' ? '#ff0000' : '#00ff00';
-          this.updateSceneColor(this.imuModel.scene(), color);
+          this.imuStatusColor.set(log.level === 'error' ? '#ff0000' : '#00ff00');
         } else if (msg.includes('Lidar') || msg.includes('VL53L5CX')) {
-          const color = (log.level === 'warning' || log.level === 'error') ? '#ff0000' : '#00ff00';
-          this.updateSceneColor(this.lidarModel.scene(), color);
+          this.lidarStatusColor.set((log.level === 'warning' || log.level === 'error') ? '#ff0000' : '#00ff00');
         } else if (msg.includes('authorized') || msg.includes('WebSocket')) {
-          this.updateSceneColor(this.esp32Model.scene(), '#00ff00');
+          this.espStatusColor.set('#00ff00');
         }
       })
     );
   }
 
-  /**
-   * @brief Sprzątanie subskrypcji.
-   */
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
 
   /**
-   * @brief Zmienia kolor i emisyjność materiałów w danej scenie (podmodelu) 3D.
-   * @param scene Obiekt 3D (Group/Object3D).
-   * @param colorHex Kolor w formacie hex.
+   * @brief Bezpieczna inicjalizacja modelu (tylko raz).
    */
+  private tryInit(scene: THREE.Group | THREE.Object3D | undefined | null) {
+    if (!scene || this.initializedModels.has(scene)) return;
+    this.initializedModels.add(scene);
+    this.initModelMaterials(scene);
+  }
+
   private updateSceneColor(scene: THREE.Group | THREE.Object3D | undefined | null, colorHex: string) {
     if (!scene) return;
     scene.traverse((child) => {
@@ -117,33 +140,22 @@ export class DiagnosticsComponent implements OnInit, OnDestroy {
         if (mesh.material instanceof THREE.MeshStandardMaterial) {
           mesh.material.color.set(colorHex);
           mesh.material.emissive.set(colorHex);
-          mesh.material.emissiveIntensity = 0.3;
+          mesh.material.emissiveIntensity = 0.5;
         }
       }
     });
   }
 
-  /**
-   * @brief Inicjalizuje materiały modelu po załadowaniu pliku GLB.
-   * Ustawia bazowe kolory, metaliczność i chropowatość materiałów.
-   * @param scene Załadowana scena 3D.
-   */
-  private initModel(scene: THREE.Group | THREE.Object3D | undefined | null) {
-    if (!scene) return;
+  private initModelMaterials(scene: THREE.Group | THREE.Object3D) {
     scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         const name = mesh.name.toLowerCase();
 
         let baseColor = '#c1c1c1';
-        if (
-          name.includes('wheel') ||
-          name.includes('board')
-        ) {
+        if (name.includes('wheel') || name.includes('board')) {
           baseColor = '#ffffff';
         }
-
-        this.originalColors.set(mesh.uuid, baseColor);
 
         mesh.material = new THREE.MeshStandardMaterial({
           color: baseColor,

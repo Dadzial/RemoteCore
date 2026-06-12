@@ -60,13 +60,15 @@ export class WebSocketService {
    */
   public on<T>(event: string): Observable<T> {
     return new Observable((observer) => {
+      const listener = (data: T) => {
+        this.ngZone.run(() => {
+          observer.next(data);
+        });
+      };
+
       const checkAndSubscribe = () => {
         if (this.socket) {
-          this.socket.on(event, (data: T) => {
-            this.ngZone.run(() => {
-              observer.next(data);
-            });
-          });
+          this.socket.on(event, listener);
         } else {
           // Czekaj na inicjalizację gniazda
           setTimeout(checkAndSubscribe, 100);
@@ -74,7 +76,12 @@ export class WebSocketService {
       };
 
       checkAndSubscribe();
-      return () => this.socket?.off(event);
+
+      return () => {
+        if (this.socket) {
+          this.socket.off(event, listener);
+        }
+      };
     });
   }
 
